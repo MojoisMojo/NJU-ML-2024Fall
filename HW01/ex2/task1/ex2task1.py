@@ -27,6 +27,10 @@ draw = ImageDraw.Draw(image)
 draw.line((margin, height - margin, margin, margin), fill="black")
 draw.line((margin, height - margin, width - margin, height - margin), fill="black")
 
+# 添加轴标签
+draw.text((margin - 40, margin - 20), "查准率", fill="black")
+draw.text((width - margin + 10, height - margin + 10), "查全率", fill="black")
+
 # 绘制刻度和标签
 for i in range(6):
     x = margin + i * (width - 2 * margin) / 5
@@ -45,4 +49,3 @@ draw.line(points, fill="blue", width=2)
 
 # 保存图像
 image.save("precision_recall_curve.png")
-image.show()
