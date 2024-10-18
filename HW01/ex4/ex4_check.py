@@ -1,19 +1,18 @@
+
+from sklearn.linear_model import LinearRegression
 # from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 import os
-
 # X,y = load_boston(return_X_y=True)
 
 try:
-    if os.path.exists("boston_housing.csv"):
-        df = pd.read_csv("boston_housing.csv")
-        y = df["MEDV"]  # 标签-房价
-        X = df.drop(["MEDV"], axis=1)  # 去掉标签（房价）的数据子集
-        trainx, testx, trainy, testy = train_test_split(
-            X, y, test_size=0.33, random_state=42
-        )
+    if os.path.exists('boston_housing.csv'):
+        df = pd.read_csv('boston_housing.csv')
+        y = df['MEDV'] # 标签-房价
+        X = df.drop(['MEDV'], axis=1) #去掉标签（房价）的数据子集
+        trainx, testx, trainy, testy = train_test_split(X, y, test_size=0.33, random_state=42)
     else:
         raise FileNotFoundError("boston_housing.csv not found")
 except Exception as e:
@@ -57,67 +56,45 @@ except Exception as e:
     X = np.hstack([raw_df.values[::2, :], raw_df.values[1::2, :2]])
     # 选择 raw_df 中所有奇数行（从第1行开始，每隔一行取一次），并选择第3列（索引为2） 也就是目标房价MEDV
     y = raw_df.values[1::2, 2]
-    trainx, testx, trainy, testy = train_test_split(
-        X, y, test_size=0.33, random_state=42
-    )
+    trainx, testx, trainy, testy = train_test_split(X, y, test_size=0.33, random_state=42)
     # 将特征矩阵和目标向量组合成一个 DataFrame
-    df = pd.DataFrame(
-        np.hstack([X, y.reshape(-1, 1)]),
-        columns=[
-            "CRIM",
-            "ZN",
-            "INDUS",
-            "CHAS",
-            "NOX",
-            "RM",
-            "AGE",
-            "DIS",
-            "RAD",
-            "TAX",
-            "PTRATIO",
-            "B",
-            "LSTAT",
-            "MEDV",
-        ],
-    )
+    df = pd.DataFrame(np.hstack([X, y.reshape(-1, 1)]), columns=[
+        'CRIM', 'ZN', 'INDUS', 'CHAS', 'NOX', 'RM', 'AGE', 'DIS', 'RAD', 'TAX', 'PTRATIO', 'B', 'LSTAT', 'MEDV'
+    ])
 
     # 保存为 CSV 文件
-    df.to_csv("boston_housing.csv", index=False)
+    df.to_csv('boston_housing.csv', index=False)
     print("boston_housing.csv saved")
-
 
 def linear_regression(X_train, y_train):
     """线性回归
 
     Args:
-        X_train (np.ndarray): n X ( d + 1 )
+        X_train (np.ndarray): n X d
         y_train (np.ndarray): n X 1
-    返回：权重矩阵W
+    返回：权重矩阵W,b
     """
-    # 使用方程计算 W
-    # W = (X^T * X)^-1 * X^T * y
-    W = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ y_train
-    return W
+    lr = LinearRegression()
+    lr.fit(X_train, y_train)
+    W,b = lr.coef_, lr.intercept_
+    return W,b
 
 
 def MSE(X_train, y_train, X_test, y_test):
     """调用linear_regression得到权重矩阵W后计算均方误差MSE
 
     Args:
-        X_train (np.ndarray): n X ( d + 1 )
+        X_train (np.ndarray): n X d
         y_train (np.ndarray): n X 1
-        X_test (np.ndarray): n X ( d + 1 )
+        X_test (np.ndarray): n X d
         y_test (np.ndarray): n X 1
     返回：标量，均方误差MSE的值
     """
-    W = linear_regression(X_train, y_train)
-    y_pred = X_test @ W
+    W,b = linear_regression(X_train, y_train)
+    y_pred = X_test @ W + b
     MSE = np.mean((y_pred - y_test) ** 2)
     return MSE
 
 
-# 添加一列全1
-trainx = np.hstack([trainx,np.ones((trainx.shape[0], 1))])
-testx = np.hstack([testx, np.ones((testx.shape[0], 1))])
 linear_regression_MSE = MSE(trainx, trainy, testx, testy)
-print(linear_regression_MSE)  # 输出: 20.724023437334946
+print(linear_regression_MSE)  # 输出: 23.60384463049043
