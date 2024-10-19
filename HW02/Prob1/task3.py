@@ -96,5 +96,5 @@ def task3(
 if __name__ == "__main__":
     data_loader = DataLoader("../data/creditcard.csv")
     run_timestemp = datetime.now().strftime("%m%d_%H%M%S")
-    load_path = "./output/1019_193805/task3/svm_model.pkl"
+    load_path = "./out/rand_seed_14_N_400_K_7/task3/svm_model.pkl"
     task3(run_timestemp, data_loader, load_path, is_train=False)
