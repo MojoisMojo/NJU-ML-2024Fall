@@ -28,6 +28,9 @@ class SVCModel:
             return
         for _ in mytqdm(range(1), desc="Training SVM model"):
             self.model.fit(X_train, y_train)
+        if self.savepath:
+            self.save(self.savepath)
+            print(f"Model saved to {self.savepath}")
 
     def predict(self, X_test):
         return self.model.predict(X_test), self.model.predict_proba(X_test)[:, 1]
@@ -38,21 +41,15 @@ class SVCModel:
     def load(self, path):
         self.model = joblib.load(path)
 
-    def run(self, X_train, y_train, X_test):
-        self.train(X_train, y_train)
-        if self.savepath:
-            self.save(self.savepath)
-            print(f"Model saved to {self.savepath}")
-        return self.predict(X_test)
-
     def validate(self, y_test, y_pred, y_prob):
         return validate(y_test, y_pred, y_prob)
 
     def validate_and_print(self, y_test, y_pred, y_prob, file_path, curve_path):
-        accuracy, recall, f1, auc = self.validate(y_test, y_pred, y_prob)
-        print_and_write(file_path, f"Accuracy: {accuracy:.4f}")
-        print_and_write(file_path, f"Recall: {recall:.4f}")
-        print_and_write(file_path, f"F1 Score: {f1:.4f}")
-        print_and_write(file_path, f"AUC: {auc:.4f}")
+        accuracy, precision, recall, f1, auc = self.validate(y_test, y_pred, y_prob)
+        print_and_write(file_path, f"Accuracy: {accuracy:.6f}")
+        print_and_write(file_path, f"Precision: {precision:.6f}")
+        print_and_write(file_path, f"Recall: {recall:.6f}")
+        print_and_write(file_path, f"F1 Score: {f1:.6f}")
+        print_and_write(file_path, f"AUC: {auc:.6f}")
         plot_roc_curve(y_test, y_prob, curve_path)
-        return accuracy, recall, f1, auc
+        return accuracy, precision, recall, f1, auc

@@ -9,6 +9,7 @@ def task2(
     run_time,
     data_loader: DataLoader,
     loadpaths=[None, None, None],
+    is_test=False
 ):
     task_name = "task2"
     dir_path = f"./output/{run_time}/{task_name}"
@@ -40,8 +41,11 @@ def task2(
 
         svm_model = SVCModel(loadpath=loadpath, savepath=savepath)
 
-        # 训练、存储、预测 SVM 模型
-        y_pred, y_prob = svm_model.run(X_train_reduced, y_train_reduced, X_test)
+        if loadpath == None or not is_test:
+            # 训练、保存 SVM 模型
+            svm_model.train(X_train, y_train)
+        # 预测 SVM 模型
+        y_pred, y_prob = svm_model.predict(X_test)
 
         # 计算评估指标 并输出 & 画图
         svm_model.validate_and_print(y_test, y_pred, y_prob, task_path, curve_path)

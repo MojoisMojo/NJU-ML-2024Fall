@@ -1,6 +1,7 @@
 from tqdm import tqdm
 from sklearn.metrics import (
     accuracy_score,
+    precision_score,
     recall_score,
     f1_score,
     roc_auc_score,
@@ -34,16 +35,18 @@ def validate(y_test, y_pred, y_prob):
     Returns:
     tuple: A tuple containing the following metrics:
         - accuracy (float): The accuracy score.
+        - precision (float): The precision score.
         - recall (float): The recall score.
         - f1 (float): The F1 score.
         - auc (float): The Area Under the ROC Curve (AUC) score.
     """
     # 计算评估指标
     accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
     recall = recall_score(y_test, y_pred)
     f1 = f1_score(y_test, y_pred)
     auc = roc_auc_score(y_test, y_prob)
-    return accuracy, recall, f1, auc
+    return accuracy, precision, recall, f1, auc
 
 
 def plot_roc_curve(y_test, y_prob, save_path=None):
