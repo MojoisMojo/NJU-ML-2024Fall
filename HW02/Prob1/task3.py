@@ -1,9 +1,11 @@
-from params import RAND_STATE_SEED
 from model import SVCModel
 from sklearn.neighbors import NearestNeighbors
 from dataloader import DataLoader
 from datetime import datetime
+import numpy as np
+import pandas as pd
 import os
+from utils import mytqdm
 
 """
 % 注意:
@@ -11,12 +13,16 @@ import os
 % 2. 记得处理数值稳定性问题，例如在计算对数时避免除以零。
 % 3. 在报告中详细讨论您的观察结果和任何有趣的发现。
 """
+
+
 class SMOTE(object):
     def __init__(self, X, y, N, K, random_state=None):
         self.N = N  # 每个小类样本合成样本个数
         self.K = K  # 近邻个数
         self.label = y  # 进行数据增强的类别
-        self.sample = X
+        self.sample = (
+            X.values if isinstance(X, pd.DataFrame) else X
+        )  # 转换为 numpy 数组
         self.n_sample, self.n = X.shape  # 小样本个数, 特征个数
         if random_state is not None:
             np.random.seed(random_state)
@@ -30,17 +36,20 @@ class SMOTE(object):
         synthetic_samples = np.zeros((n_synthetic_samples, self.n))
 
         # 使用 K 近邻算法找到每个样本的 K 个最近邻
-        neigh = NearestNeighbors(n_neighbors=self.K)
+        neigh = NearestNeighbors(
+            n_neighbors=self.K,
+        )
         neigh.fit(self.sample)
         neighbors = neigh.kneighbors(self.sample, return_distance=False)
 
         # 生成合成样本
-        for i in range(self.n_sample):
+        for i in mytqdm(range(self.n_sample), desc="Generating synthetic samples"):
             for n in range(N):
                 nn = np.random.choice(neighbors[i][neighbors[i] != i])
                 diff = self.sample[nn] - self.sample[i]
                 gap = np.random.rand()
                 synthetic_samples[i * N + n] = self.sample[i] + gap * diff
+        print("Synthetic samples generated")
         return synthetic_samples, np.ones(n_synthetic_samples) * self.label
 
 
@@ -48,6 +57,7 @@ def task3(
     run_time,
     data_loader: DataLoader,
     loadpath=None,
+    is_train=True,
 ):
     task_name = "task3"
     dir_path = f"./output/{run_time}/{task_name}"
@@ -60,17 +70,31 @@ def task3(
     outfile.close()
 
     X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=False)
-    X_train_neg = X_train[y_train == 0]
-    y_neg_label = 0
+    y_pos_label = 1
+    X_train_pos = X_train[y_train == y_pos_label]
 
-    smote = SMOTE(X_train_neg, y_neg_label, N=200, K=7)
+    print(f"X_train shape: {X_train.shape}")
+
+    smote = SMOTE(X_train_pos, y_pos_label, N=400, K=7)
 
     synthetic_samples, y_reduced = smote.over_sampling()
     X_train = np.vstack([X_train, synthetic_samples])
     y_train = np.hstack([y_train, y_reduced])
+    
+    print(f"X_train shape: {X_train.shape}")
+
+    svm_model = SVCModel(loadpath=loadpath, savepath=savepath)
+
+    if loadpath is None or is_train:
+        svm_model.train(X_train, y_train)
+
+    y_pred, y_prob = svm_model.predict(X_test)
+
+    svm_model.validate_and_print(y_test, y_pred, y_prob, output_path, curve_path)
+
 
 if __name__ == "__main__":
     data_loader = DataLoader("../data/creditcard.csv")
     run_timestemp = datetime.now().strftime("%m%d_%H%M%S")
     load_path = None
-    task3(data_loader, run_timestemp, load_path)
+    task3(run_timestemp, data_loader, load_path)
