@@ -43,7 +43,7 @@ def task2(
 
         if loadpath == None or not is_test:
             # 训练、保存 SVM 模型
-            svm_model.train(X_train, y_train)
+            svm_model.train(X_train_reduced, y_train_reduced)
         # 预测 SVM 模型
         y_pred, y_prob = svm_model.predict(X_test)
 
