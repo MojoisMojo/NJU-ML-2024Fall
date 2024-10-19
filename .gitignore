@@ -2,9 +2,11 @@
 *.pyc
 *.png
 *.csv
+*.out
 *.aux
 *.log
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*.synctex(busy)
 .vscode
