@@ -6,10 +6,7 @@ from utils import print_and_write
 
 
 def task2(
-    run_time,
-    data_loader: DataLoader,
-    loadpaths=[None, None, None],
-    is_test=False
+    run_time, data_loader: DataLoader, loadpaths=[None, None, None], is_test=False
 ):
     task_name = "task2"
     dir_path = f"./output/{run_time}/{task_name}"
@@ -33,9 +30,9 @@ def task2(
         print_and_write(
             task_path,
             "######################################" * 2
-            + f"\nRemove {remove_cnt} positive samples",
+            + f"\nRemove {remove_cnt} negative samples",
         )
-        X_train_reduced, y_train_reduced = data_loader.reduce_positives(
+        X_train_reduced, y_train_reduced = data_loader.reduce_negatives(
             X_train, y_train, remove_cnt
         )
 

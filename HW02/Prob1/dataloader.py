@@ -24,7 +24,7 @@ class DataLoader:
     def split_undersampling(self):
         raise NotImplementedError
 
-    def reduce_positives(self, X_train, y_train, remove_count):
+    def reduce_negatives(self, X_train, y_train, remove_count):
         X_train_pos = X_train[y_train == 1]
         X_train_neg = X_train[y_train == 0]
 
