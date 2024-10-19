@@ -19,7 +19,7 @@ class mytqdm(tqdm):
             iterable,
             desc=desc,
             ncols=100,
-            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}{postfix}]",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
             colour="green",
         )
 
