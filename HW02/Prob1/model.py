@@ -1,11 +1,5 @@
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.svm import SVC
 from params import CACHE_SIZE
-import matplotlib.pyplot as plt
-import datetime
-import os
 from utils import mytqdm, validate, print_and_write, plot_roc_curve
 import joblib
 
@@ -54,11 +48,11 @@ class SVCModel:
     def validate(self, y_test, y_pred, y_prob):
         return validate(y_test, y_pred, y_prob)
 
-    def validate_and_print(self, y_test, y_pred, y_prob, out_file, curve_path):
+    def validate_and_print(self, y_test, y_pred, y_prob, file_path, curve_path):
         accuracy, recall, f1, auc = self.validate(y_test, y_pred, y_prob)
-        print_and_write(out_file, f"Accuracy: {accuracy:.4f}")
-        print_and_write(out_file, f"Recall: {recall:.4f}")
-        print_and_write(out_file, f"F1 Score: {f1:.4f}")
-        print_and_write(out_file, f"AUC: {auc:.4f}")
+        print_and_write(file_path, f"Accuracy: {accuracy:.4f}")
+        print_and_write(file_path, f"Recall: {recall:.4f}")
+        print_and_write(file_path, f"F1 Score: {f1:.4f}")
+        print_and_write(file_path, f"AUC: {auc:.4f}")
         plot_roc_curve(y_test, y_prob, curve_path)
         return accuracy, recall, f1, auc

@@ -10,13 +10,12 @@ def task1(
     loadpath=None,
 ):
     task_name = "task1"
-    dir_path = f"../output/{run_time}/{task_name}"
+    dir_path = f"./output/{run_time}/{task_name}"
     savepath = f"{dir_path}/svm_model.pkl"
-    task_path = f"{dir_path}/out.txt"
+    task_path = f"{dir_path}/out.out"
     os.makedirs(dir_path, exist_ok=True)
     out_file = open(task_path, "w")  # 清空文件内容
     out_file.close()
-    out_file = open(task_path, "a")  # 追加写入
     curve_path = f"{dir_path}/roc_curve.png"
 
     X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=True)
@@ -27,8 +26,7 @@ def task1(
     y_pred, y_prob = svm_model.run(X_train, y_train, X_test)
 
     # 计算评估指标 并输出 & 画图
-    svm_model.validate_and_print(y_test, y_pred, y_prob, out_file, curve_path)
-    out_file.close()
+    svm_model.validate_and_print(y_test, y_pred, y_prob, task_path, curve_path)
 
 
 if __name__ == "__main__":

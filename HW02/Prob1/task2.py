@@ -11,8 +11,8 @@ def task2(
     loadpaths=[None, None, None],
 ):
     task_name = "task2"
-    dir_path = f"../output/{run_time}/{task_name}"
-    task_path = f"{dir_path}/out.txt"
+    dir_path = f"./output/{run_time}/{task_name}"
+    task_path = f"{dir_path}/out.out"
     os.makedirs(dir_path, exist_ok=True)
     out_file = open(task_path, "w")  # 清空文件内容
     out_file.close()
@@ -26,10 +26,13 @@ def task2(
         remove_cnt = remove_cnts[i]
         loadpath = loadpaths[i]
         savepath = f"{dir_path}/svm_model_remove{remove_cnt}.pkl"
-        out_file = open(task_path, "a")  # 追加写入
+
         curve_path = f"{dir_path}/roc_curve_remove{remove_cnt}.png"
-        print_and_write(out_file, "######################################" * 2)
-        print_and_write(out_file, f"Remove {remove_cnt} positive samples")
+        print_and_write(
+            task_path,
+            "######################################" * 2
+            + f"\nRemove {remove_cnt} positive samples",
+        )
         X_train_reduced, y_train_reduced = data_loader.reduce_positives(
             X_train, y_train, remove_cnt
         )
@@ -40,8 +43,7 @@ def task2(
         y_pred, y_prob = svm_model.run(X_train_reduced, y_train_reduced, X_test)
 
         # 计算评估指标 并输出 & 画图
-        svm_model.validate_and_print(y_test, y_pred, y_prob, out_file, curve_path)
-        out_file.close()
+        svm_model.validate_and_print(y_test, y_pred, y_prob, task_path, curve_path)
 
     for i in range(3):
         undersampling_train_and_test(i, X_train, y_train)

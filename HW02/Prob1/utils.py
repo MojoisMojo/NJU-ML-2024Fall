@@ -19,7 +19,7 @@ class mytqdm(tqdm):
             iterable,
             desc=desc,
             ncols=100,
-            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt}",
+            bar_format="{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}]",
             colour="green",
         )
 
@@ -69,6 +69,8 @@ def plot_roc_curve(y_test, y_prob, save_path=None):
         plt.show()
 
 
-def print_and_write(file, content):
+def print_and_write(file_path, content):
+
     print(content)
-    file.write(content + "\n")
+    with open(file_path, "a") as file:
+        file.write(content + "\n")

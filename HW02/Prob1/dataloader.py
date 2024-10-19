@@ -1,6 +1,5 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from imblearn.under_sampling import RandomUnderSampler
 from params import RAND_STATE_SEED
 
 
@@ -24,12 +23,6 @@ class DataLoader:
 
     def split_undersampling(self):
         raise NotImplementedError
-        rus = RandomUnderSampler(random_state=RAND_STATE_SEED)
-        X_resampled, y_resampled = rus.fit_resample(self.X, self.y)
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_resampled, y_resampled, test_size=0.2, random_state=14
-        )
-        return X_train, X_test, y_train, y_test
 
     def reduce_positives(self, X_train, y_train, remove_count):
         X_train_pos = X_train[y_train == 1]
@@ -39,11 +32,11 @@ class DataLoader:
             n=len(X_train_neg) - remove_count, random_state=RAND_STATE_SEED
         )
 
-        X_train_reduced = pd.concat([X_train_neg_reduced, X_train_neg])
+        X_train_reduced = pd.concat([X_train_neg_reduced, X_train_pos])
         y_train_reduced = pd.concat(
             [
-                pd.Series(1, index=X_train_neg_reduced.index),
-                pd.Series(0, index=X_train_neg.index),
+                pd.Series(0, index=X_train_neg_reduced.index),
+                pd.Series(1, index=X_train_pos.index),
             ]
         )
 
