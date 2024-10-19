@@ -1,6 +1,5 @@
 *.pdf
 *.pyc
-*.png
 *.csv
 *.out
 *.aux
@@ -9,6 +8,5 @@
 *.fdb_latexmk
 *.synctex.gz
 *.synctex(busy)
-*.pkl
 **/output
 .vscode

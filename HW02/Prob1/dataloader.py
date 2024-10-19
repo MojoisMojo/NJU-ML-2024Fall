@@ -6,8 +6,8 @@ from params import RAND_STATE_SEED
 class DataLoader:
     def __init__(self, csv_path) -> None:
         df = pd.read_csv(csv_path)
-        self.X = df.drop("Class", axis=1)
-        self.y = df["Class"]
+        self.X = df.drop("Class", axis=1).values
+        self.y = df["Class"].values
 
     # 默认：80% 训练集，20% 测试集
     # 针对 不平衡数据集 使用 stratify=y

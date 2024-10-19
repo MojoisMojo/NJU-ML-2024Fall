@@ -16,6 +16,7 @@ class SVCModel:
         if loadpath:
             try:
                 self.load(loadpath)
+                print(f"Model loaded from {loadpath}")
             except:
                 print("Model not found, creating a new model")
                 self.model = SVC(probability=probability, cache_size=cache_size)
