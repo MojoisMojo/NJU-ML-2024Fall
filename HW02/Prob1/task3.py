@@ -20,9 +20,7 @@ class SMOTE(object):
         self.N = N  # 每个小类样本合成样本个数
         self.K = K  # 近邻个数
         self.label = y  # 进行数据增强的类别
-        self.sample = (
-            X.values if isinstance(X, pd.DataFrame) else X
-        )  # 转换为 numpy 数组
+        self.sample = X # 进行数据增强的样本
         self.n_sample, self.n = X.shape  # 小样本个数, 特征个数
         if random_state is not None:
             np.random.seed(random_state)
