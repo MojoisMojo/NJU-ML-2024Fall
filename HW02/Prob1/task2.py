@@ -19,7 +19,8 @@ def task2(
 
     remove_cnts = [2000, 20000, 200000]
 
-    X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=True)
+    X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=False)
+    # X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=True)
 
     def undersampling_train_and_test(i, X_train, y_train):
 

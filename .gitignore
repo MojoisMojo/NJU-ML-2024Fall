@@ -9,4 +9,6 @@
 *.fdb_latexmk
 *.synctex.gz
 *.synctex(busy)
+*.pkl
+**/output
 .vscode

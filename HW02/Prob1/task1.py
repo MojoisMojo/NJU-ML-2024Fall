@@ -18,7 +18,8 @@ def task1(
     out_file.close()
     curve_path = f"{dir_path}/roc_curve.png"
 
-    X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=True)
+    X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=False)
+    # X_train, X_test, y_train, y_test = data_loader.split(test_size=0.2, stratify=True)
 
     svm_model = SVCModel(loadpath=loadpath, savepath=savepath)
 
