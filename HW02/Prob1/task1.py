@@ -4,7 +4,7 @@ from model import SVCModel
 from dataloader import DataLoader
 
 
-def task1(run_time, data_loader: DataLoader, loadpath=None, is_test=False):
+def task1(run_time, data_loader: DataLoader, loadpath=None, is_train=True):
     task_name = "task1"
     dir_path = f"./output/{run_time}/{task_name}"
     savepath = f"{dir_path}/svm_model.pkl"
@@ -19,7 +19,7 @@ def task1(run_time, data_loader: DataLoader, loadpath=None, is_test=False):
 
     svm_model = SVCModel(loadpath=loadpath, savepath=savepath)
 
-    if loadpath == None or not is_test:
+    if loadpath == None or is_train:
         # 训练、保存 SVM 模型
         svm_model.train(X_train, y_train)
     # 预测 SVM 模型

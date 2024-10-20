@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
 from params import RAND_STATE_SEED
 
@@ -28,15 +29,20 @@ class DataLoader:
         X_train_pos = X_train[y_train == 1]
         X_train_neg = X_train[y_train == 0]
 
-        X_train_neg_reduced = X_train_neg.sample(
-            n=len(X_train_neg) - remove_count, random_state=RAND_STATE_SEED
+        # 使用 numpy 的 random.choice 方法进行随机选择
+        np.random.seed(RAND_STATE_SEED)
+        indices = np.random.choice(
+            len(X_train_neg),
+            size=len(X_train_neg) - remove_count,
+            replace=False,
         )
+        X_train_neg_reduced = X_train_neg[indices]
 
-        X_train_reduced = pd.concat([X_train_neg_reduced, X_train_pos])
-        y_train_reduced = pd.concat(
+        X_train_reduced = np.vstack([X_train_neg_reduced, X_train_pos])
+        y_train_reduced = np.hstack(
             [
-                pd.Series(0, index=X_train_neg_reduced.index),
-                pd.Series(1, index=X_train_pos.index),
+                np.zeros(len(X_train_neg_reduced)),
+                np.ones(len(X_train_pos)),
             ]
         )
 
