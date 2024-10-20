@@ -60,11 +60,12 @@ def task3(
     N, K = params["N"], params["K"]
     task_name = "task3"
     dir_path = f"./output/{out_dir}/{task_name}"
-    savepath = f"{dir_path}/svm_model.pkl"
+    savepath = f"{dir_path}/N_{N}_K_{K}/svm_model.pkl"
     output_path = f"{dir_path}/out.out"
     curve_path = f"{dir_path}/roc_curve_N_{N}_K_{K}.png"
 
     os.makedirs(dir_path, exist_ok=True)
+    os.makedirs(f"{dir_path}/N_{N}_K_{K}", exist_ok=True)
     # outfile = open(output_path, "w")  # 清空文件内容
     # outfile.close()
 
@@ -99,5 +100,5 @@ if __name__ == "__main__":
     data_loader = DataLoader("../data/creditcard.csv")
     run_timestemp = datetime.now().strftime("%m%d_%H%M%S")
     load_path = None
-    params = {"N": 30, "K": 7}
+    params = {"N": 3, "K": 7}
     task3(run_timestemp, data_loader, load_path, params=params)

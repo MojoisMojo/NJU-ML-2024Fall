@@ -7,10 +7,9 @@ from datetime import datetime
 
 def train(out_dir, data_loader: DataLoader):
     task1(out_dir, data_loader)
-    return 
     for remove_count in [2000, 20000, 200000]:
         task2(out_dir, data_loader, remove_cnt=remove_count)
-    for n in [30, 50, 100, 200, 400]:
+    for n in [3, 5, 7, 15, 30, 50, 100, 200, 400]:
         task3(out_dir, data_loader, params={"N": n})
 
 
@@ -21,7 +20,6 @@ def test(out_dir, data_loader: DataLoader, model_dir="./model/rand_seed_14"):
         is_train=False,
         loadpath=f"{model_dir}/task1/svm_model.pkl",
     )
-    return 
     for c in [2000, 20000, 200000]:
         loadpath = f"{model_dir}/task2/svm_model_remove{c}.pkl"
         task2(
@@ -32,6 +30,9 @@ def test(out_dir, data_loader: DataLoader, model_dir="./model/rand_seed_14"):
             remove_cnt=c,
         )
     for n, k in [
+        (5, 7),
+        (7, 7),  # 7 的效果没 5 好， 代表性也不是很高 建议也不用运行
+        (15, 7),
         (30, 7),
         (50, 7),
         (100, 7),
