@@ -6,10 +6,10 @@ from utils import print_and_write
 
 
 def task2(
-    run_time, data_loader: DataLoader, loadpath=None, is_train=True, remove_cnt=0
+    out_dir, data_loader: DataLoader, loadpath=None, is_train=True, remove_cnt=0
 ):
     task_name = "task2"
-    dir_path = f"./output/{run_time}/{task_name}"
+    dir_path = f"./output/{out_dir}/{task_name}"
     output_path = f"{dir_path}/out.out"
     os.makedirs(dir_path, exist_ok=True)
 

@@ -4,9 +4,9 @@ from model import SVCModel
 from dataloader import DataLoader
 
 
-def task1(run_time, data_loader: DataLoader, loadpath=None, is_train=True):
+def task1(out_dir, data_loader: DataLoader, loadpath=None, is_train=True):
     task_name = "task1"
-    dir_path = f"./output/{run_time}/{task_name}"
+    dir_path = f"./output/{out_dir}/{task_name}"
     savepath = f"{dir_path}/svm_model.pkl"
     output_path = f"{dir_path}/out.out"
     os.makedirs(dir_path, exist_ok=True)

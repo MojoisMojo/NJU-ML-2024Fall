@@ -51,7 +51,7 @@ class SMOTE(object):
 
 
 def task3(
-    run_time,
+    out_dir,
     data_loader: DataLoader,
     loadpath=None,
     is_train=True,
@@ -59,7 +59,7 @@ def task3(
 ):
     N, K = params["N"], params["K"]
     task_name = "task3"
-    dir_path = f"./output/{run_time}/{task_name}"
+    dir_path = f"./output/{out_dir}/{task_name}"
     savepath = f"{dir_path}/svm_model.pkl"
     output_path = f"{dir_path}/out.out"
     curve_path = f"{dir_path}/roc_curve_N_{N}_K_{K}.png"
