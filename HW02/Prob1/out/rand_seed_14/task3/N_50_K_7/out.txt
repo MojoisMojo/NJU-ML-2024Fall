@@ -1,6 +1,0 @@
-X_train shape: (247545, 28)
-Accuracy: 0.998912
-Precision: 0.636364
-Recall: 0.857143
-F1 Score: 0.730435
-AUC: 0.981739

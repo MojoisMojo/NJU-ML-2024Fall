@@ -62,7 +62,7 @@ def task3(
     dir_path = f"./output/{run_time}/{task_name}"
     savepath = f"{dir_path}/svm_model.pkl"
     output_path = f"{dir_path}/out.out"
-    curve_path = f"{dir_path}/roc_curve.png"
+    curve_path = f"{dir_path}/roc_curve_N_{N}_K_{K}.png"
 
     os.makedirs(dir_path, exist_ok=True)
     # outfile = open(output_path, "w")  # 清空文件内容
@@ -72,7 +72,7 @@ def task3(
     y_pos_label = 1
     X_train_pos = X_train[y_train == y_pos_label]
 
-    print_and_write(output_path, "#" * 30, f"\nSMOTE N={N}, K={K}")
+    print_and_write(output_path, f"{'#' * 30}\n Params N={N}, K={K}")
 
     if is_train:
         print(f"X_train shape: {X_train.shape}")
@@ -98,7 +98,6 @@ def task3(
 if __name__ == "__main__":
     data_loader = DataLoader("../data/creditcard.csv")
     run_timestemp = datetime.now().strftime("%m%d_%H%M%S")
-    # load_path = "./out/rand_seed_14_N_400_K_7/task3/svm_model.pkl"
     load_path = None
     params = {"N": 30, "K": 7}
     task3(run_timestemp, data_loader, load_path, params=params)

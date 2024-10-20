@@ -1,0 +1,35 @@
+##############################
+ Params N=30, K=7
+Accuracy: 0.999192
+Precision: 0.728070
+Recall: 0.846939
+F1 Score: 0.783019
+AUC: 0.980940
+##############################
+ Params N=50, K=7
+Accuracy: 0.998912
+Precision: 0.636364
+Recall: 0.857143
+F1 Score: 0.730435
+AUC: 0.981739
+##############################
+ Params N=100, K=7
+Accuracy: 0.998227
+Precision: 0.491329
+Recall: 0.867347
+F1 Score: 0.627306
+AUC: 0.975618
+##############################
+ Params N=200, K=7
+Accuracy: 0.995558
+Precision: 0.265861
+Recall: 0.897959
+F1 Score: 0.410256
+AUC: 0.975457
+##############################
+ Params N=400, K=7
+Accuracy: 0.988115
+Precision: 0.116556
+Recall: 0.897959
+F1 Score: 0.206331
+AUC: 0.969106

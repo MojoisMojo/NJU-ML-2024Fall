@@ -1,21 +1,21 @@
 ############################################################################
-Remove 2000 positive samples
+Remove 2000 negative samples
 Accuracy: 0.999350
 Precision: 0.906667
 Recall: 0.693878
 F1 Score: 0.786127
 AUC: 0.968553
 ############################################################################
-Remove 20000 positive samples
+Remove 20000 negative samples
 Accuracy: 0.999368
 Precision: 0.907895
 Recall: 0.704082
 F1 Score: 0.793103
 AUC: 0.969577
 ############################################################################
-Remove 200000 positive samples
+Remove 200000 negative samples
 Accuracy: 0.999298
 Precision: 0.802083
 Recall: 0.785714
 F1 Score: 0.793814
-AUC: 0.973113
+AUC: 0.973112
