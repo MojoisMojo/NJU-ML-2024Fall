@@ -30,8 +30,9 @@ def test(out_dir, data_loader: DataLoader, model_dir="./model/rand_seed_14"):
             remove_cnt=c,
         )
     for n, k in [
-        (5, 7),
-        (7, 7),  # 7 的效果没 5 好， 代表性也不是很高 建议也不用运行
+        (3, 7),
+        (5, 7), # 5 感觉不太对
+        (7, 7),  
         (15, 7),
         (30, 7),
         (50, 7),

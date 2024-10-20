@@ -1,4 +1,12 @@
 ##############################
+ Params N=3, K=7
+X_train shape: (229027, 28)
+Accuracy: 0.999456
+Precision: 0.913580
+Recall: 0.755102
+F1 Score: 0.826816
+AUC: 0.968986
+##############################
  Params N=5, K=7
 X_train shape: (229815, 28)
 Accuracy: 0.999544

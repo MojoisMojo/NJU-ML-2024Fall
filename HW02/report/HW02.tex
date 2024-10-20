@@ -77,12 +77,14 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 
 \subsection*{代码说明}
 \begin{itemize}
-    \item 代码见压缩包code中的Prob1, 代码详细说明见Prob1中的README文件; 
+    \item 代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件; 
     \item 详细输出见Prob1中的out文件夹。
 \end{itemize}
 
 \subsection*{Task1}
 该数据集共有284807个样本，其中只有492个负样本。请按照训练集和测试集比例4：1的方式划分数据集（使用固定的随机种子）。在训练集上训练SVM模型，并计算该模型在测试集上的精度（如准确率、召回率、F1分数，AUC等）。请展示SVM模型训练过程的完整代码，并绘制ROC曲线（8 points）；
+
+\textcolor{red}{代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件}
 
 \begin{minipage}{\textwidth}
     \begin{minipage}{0.65\textwidth}
@@ -118,17 +120,17 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
     \midrule
     SVM & 0.999350 & 0.906667 & 0.693878 & 0.786127 & 0.968045\\
     \midrule
-    SVM-2k & 0.999350 & 0.906667 & 0.693878 & 0.786127 & 0.968553\\
+    SVM-rm2k & 0.999350 & 0.906667 & 0.693878 & 0.786127 & 0.968553\\
     \midrule
-    SVM-2w & 0.999368 & 0.907895 & 0.704082 & 0.793103 & 0.969577\\
+    SVM-rm2w & 0.999368 & 0.907895 & 0.704082 & 0.793103 & 0.969577\\
     \midrule
-    SVM-20w & 0.999298 & 0.802083 & 0.785714 & 0.793814 & 0.973112\\
+    SVM-rm20w & 0.999298 & 0.802083 & 0.785714 & 0.793814 & 0.973112\\
     \bottomrule
     \end{tabular}
 \end{table}
 \begin{figure}[H]
     \centering
-    \begin{minipage}{0.7\textwidth}
+    \begin{minipage}{0.55\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task2/Metrics_curve_rc_0_2k_2w_20w.png}
         \label{fig:Metrics_curve_rc_0_2k_2w_20w}
@@ -138,21 +140,21 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 剔除不同数目样本的ROC曲线
 \begin{figure}[H]
     \centering
-    \begin{minipage}{0.32\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task2/roc_curve_remove2000.png}
         \caption{剔除2000个样本}
         \label{fig:roc_curve_remove2000}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.32\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task2/roc_curve_remove20000.png}
         \caption{剔除20000个样本}
         \label{fig:roc_curve_remove20000}
     \end{minipage}
     \hfill
-    \begin{minipage}{0.32\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task2/roc_curve_remove200000.png}
         \caption{剔除200000个样本}
@@ -161,7 +163,7 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
     \hfill
 \end{figure}
 
-\subsection*{2.2 结论}
+\subsection*{2.2 回答和结论}
 
 PRE 和 REC 的定义：
 \(      \text{ \ \ PRE} = \frac{\text{TP}}{\text{TP+FP}}, 
@@ -199,7 +201,7 @@ def over_sampling(self):
 \end{lstlisting}
 
 \subsection*{Task4 请说明SMOTE算法的缺点并讨论可能的改进方案（5 points）。}
-我的实现中，设置K近邻的K为7，并调整不同的N值，分别为7, 15, 30, 50, 100, 200, 400，观察并比较不同N值对模型性能的影响.
+我的实现中，设置K近邻的K为7，并调整不同的N值，分别为3, 5, 7, 15, 30, 50, 100, 200, 400，观察并比较不同N值对模型性能的影响.
 \subsection*{4.1 结果如下:（N代表每个样本合成的样本数目）}
 \begin{table}[H]
     \centering
@@ -210,24 +212,32 @@ def over_sampling(self):
     \midrule
     SVM & 0.999350 & 0.906667 & 0.693878 & 0.786127 & 0.968045\\
     \midrule
-    SVM-30 & 0.999192 & 0.728070 & 0.846939 & 0.783019 & 0.980940\\
+    SVM-N3 & 0.999456 & 0.913580 & 0.755102 & 0.826816 & 0.968986\\
     \midrule
-    SVM-50 & 0.998912 & 0.636364 & 0.857143 & 0.730435 & 0.981739\\
+    SVM-N5 & 0.999544 & 0.918605 & 0.806122 & 0.858696 & 0.975347(感觉不正常)\\
     \midrule
-    SVM-100 & 0.998227 & 0.491329 & 0.867347 & 0.627306 & 0.975618\\
+    SVM-N7 & 0.999544 & 0.918605 & 0.806122 & 0.858696 & 0.969755\\
     \midrule
-    SVM-200 & 0.995558 & 0.265861 & 0.897959 & 0.410256 & 0.975457\\
+    SVM-N15 & 0.999438 & 0.851064 & 0.816327 & 0.833333 & 0.976791\\
     \midrule
-    SVM-400 & 0.988115 & 0.116556 & 0.897959 & 0.206331 & 0.969106\\
+    SVM-N30 & 0.999192 & 0.728070 & 0.846939 & 0.783019 & 0.980940\\
+    \midrule
+    SVM-N50 & 0.998912 & 0.636364 & 0.857143 & 0.730435 & 0.981739\\
+    \midrule
+    SVM-N100 & 0.998227 & 0.491329 & 0.867347 & 0.627306 & 0.975618\\
+    \midrule
+    SVM-N200 & 0.995558 & 0.265861 & 0.897959 & 0.410256 & 0.975457\\
+    \midrule
+    SVM-N400 & 0.988115 & 0.116556 & 0.897959 & 0.206331 & 0.969106\\
     \bottomrule
     \end{tabular}
 \end{table}
 \begin{figure}[H]
     \centering
-    \begin{minipage}{0.55\textwidth}
+    \begin{minipage}{\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/Metrics_curve_N_0_7_15_30_50_100_200_400.png}
-        \label{fig:Metrics_curve_N_0_7_15_30_50_100_200_400}
+        \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/Metrics_curve_N_0_3_5_7_15_30_50_100_200_400.png}
+        \label{fig:Metrics_curve_N_0_3_5_7_15_30_50_100_200_400}
         \caption{变化曲线}
     \end{minipage}
 \end{figure}
@@ -242,9 +252,9 @@ def over_sampling(self):
     \end{minipage}
     \begin{minipage}{0.24\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_5_K_7.png}
-        \caption{N=5}
-        \label{fig:roc_curve_N_5_K_7}
+        \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_7_K_7.png}
+        \caption{N=7}
+        \label{fig:roc_curve_N_7_K_7}
     \end{minipage}
     \begin{minipage}{0.24\textwidth}
         \centering
@@ -261,25 +271,25 @@ def over_sampling(self):
 \end{figure}
 \begin{figure}[H]
     \centering
-    \begin{minipage}{0.31\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_50_K_7.png}
         \caption{N=50}
         \label{fig:roc_curve_N_50_K_7}
     \end{minipage}
-    \begin{minipage}{0.31\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_100_K_7.png}
         \caption{N=100}
         \label{fig:roc_curve_N_100_K_7}
     \end{minipage}
-    \begin{minipage}{0.31\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_200_K_7.png}
         \caption{N=200}
         \label{fig:roc_curve_N_200_K_7}
     \end{minipage}
-    \begin{minipage}{0.31\textwidth}
+    \begin{minipage}{0.24\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../Prob1/out/rand_seed_14/task3/roc_curve_N_400_K_7.png}
         \caption{N=400}
@@ -287,15 +297,23 @@ def over_sampling(self):
     \end{minipage}
 \end{figure}
 
-\subsection*{4.2 结论}
-随着 N 的增大，模型的性能逐渐下降，这是因为合成样本的质量下降，过拟合严重，导致模型的泛化能力下降。
+\subsection*{4.2 回答和结论}
+随着 N 的增大，模型的性能逐渐下降，合成样本的质量下降，过近的合成样本造成过拟合，跨边界合成样本成为噪声，导致模型的泛化能力下降。
 
-缺点：
+\textcolor{blue}{4.2.1 缺点}
     \begin{itemize}
-        \item 合成样本可能会引入噪声，导致模型过拟合。
-        \item 合成样本可能会引入冗余信息，导致模型泛化能力下降。
-        \item 合成样本可能会引入错误信息，导致模型性能下降。
+        \item N过大K过小的合成样本可能会引入冗余信息(全部合成在某个负样本周围)，导致模型泛化能力下降。
+        \item 合成样本可能会引入错误信息和噪声(比如跨边界合成样本，即两个负样本之间夹着正样本区域,但是合成样本的label却是负的)，导致模型性能下降。
         \item 将原本就比较大的训练集变得更大，导致训练时间增加。
+    \end{itemize}
+
+\textcolor{blue}{4.2.2. 可能的改进方案}
+    \begin{itemize}
+        \item 检查是否是跨边界合成样本，如果是则不合成，但是这样计算量会增加。
+        \item 对于K近邻的"邻"进行限制，比如设置最大距离和最小距离，避免合成样本过于集中造成过拟合或过于分散造成跨类别合成。
+        \item 使用ENN删除噪声样本, 以减少基于噪声样本的合成样本。
+        \item 混合采样方法，即同时使用过采样和欠采样方法。
+        \item 调整 K, N 的大小，使得合成样本的数量适中,质量更高。
     \end{itemize}
 
 \vspace{3em}

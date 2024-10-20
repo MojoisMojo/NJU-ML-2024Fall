@@ -35,6 +35,8 @@ model_dir: <your model_dir>,仅mode为test时生效,default ./model/rand_seed_14
 我的task1-2训练时间一般为9-12分钟。
 很有趣的一点是N=K附近的时候过采样的时间会变低(但是也有可能是和python的pycache有关系，没有做相关性分析)
 但是task3过采样在N很大的时候会更长的问题确实存在：
+N=3
+![alt text](./img/imageN3.png)
 N=5
 ![alt text](./img/imageN5.png)
 N=7
