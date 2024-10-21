@@ -52,5 +52,6 @@ def task2(
 if __name__ == "__main__":
     run_time = datetime.datetime.now().strftime("%m%d_%H%M%S")
     data_loader = DataLoader("../data/creditcard.csv")
-    for remove_count in [2000, 20000, 200000]:
-        task2(run_time, data_loader, remove_cnt=remove_count)
+    task2(run_time, data_loader, is_train=True, remove_cnt=200000)
+    # for remove_count in [2000, 20000, 200000]:
+        # task2(run_time, data_loader, remove_cnt=remove_count)

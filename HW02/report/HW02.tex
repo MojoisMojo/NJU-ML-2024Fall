@@ -15,6 +15,8 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 \usepackage{listings}
 \usepackage{fancyhdr}
 \usepackage{hyperref}
+\usepackage{subcaption}
+
 \pagestyle{fancy}
 
 % 设置页眉
@@ -77,14 +79,14 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 
 \subsection*{代码说明}
 \begin{itemize}
-    \item 代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件; 
+    \item \textcolor{red}{代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件}; 
     \item 详细输出见Prob1中的out文件夹。
 \end{itemize}
 
 \subsection*{Task1}
 该数据集共有284807个样本，其中只有492个负样本。请按照训练集和测试集比例4：1的方式划分数据集（使用固定的随机种子）。在训练集上训练SVM模型，并计算该模型在测试集上的精度（如准确率、召回率、F1分数，AUC等）。请展示SVM模型训练过程的完整代码，并绘制ROC曲线（8 points）；
 
-\textcolor{red}{代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件}
+{代码见压缩包code中的Prob1, 详细说明见Prob1中的README文件}
 
 \begin{minipage}{\textwidth}
     \begin{minipage}{0.65\textwidth}
@@ -322,7 +324,48 @@ def over_sampling(self):
 
 本题以决策树和多层感知机为例, 探究机器学习中的过拟合现象。 在教材2.1 节中提到, 机器学习希望训练得到的模型在新样本上保持较好的泛化性能. 如果在训练集上将模型训练得“过好”, 捕获到了训练样本中对分类无关紧要的特性, 会导致模型难以泛化到未知样本上, 这种情况称为过拟合。
 
-1.请简要总结决策树和多层感知机的工作原理及其对应的缓解过拟合的手段（决策树相关原理可以参考教材第4 章, 多层感知机可以参考教材第5 章）（5 points）；
+\subsection*{代码 与 数据集的选择}
+\begin{itemize}
+    \item \textcolor{red}{代码见压缩包code中的Prob2, 详细说明见Prob2中的README文件}; 
+    \item 详细输出见Prob2中的out文件夹。
+\end{itemize}
+
+\subsection*{Task1 请简要总结决策树和多层感知机的工作原理及其对应的缓解过拟合的手段（5 points）} 
+\subsection*{1.1 决策树}
+
+\textcolor{blue}{1.1.1 工作原理:}
+\begin{itemize}
+    \item 决策树是一种基于树结构的监督学习算法。它将数据递归地划分为多个子集，目的是通过询问一系列的条件问题来实现分类或回归。每个内部节点表示一个属性，边表示属性的划分条件，叶节点表示决策结果。
+    \item 而在选择划分属性时，常用的划分标准包括信息增益、基尼系数等。
+\end{itemize}
+
+\textcolor{blue}{1.1.2 缓解过拟合:}
+\begin{itemize}
+    \item \textbf{剪枝 (Pruning)}：剪枝可以分为预剪枝（构建过程中停止增长）和后剪枝（构建后回溯修剪）。
+    \item \textbf{设置最大深度}：限制树的最大深度，防止过深的树对训练数据过拟合。
+    \item \textbf{最小样本数}：设置分裂节点所需的最小样本数，避免过度划分。
+    \item \textbf{随机森林 (Random Forest)}：通过集成多个决策树并对其结果取平均，可以降低单棵树的过拟合风险。
+\end{itemize}
+
+\subsection*{1.2 多层感知机}
+
+\textcolor{blue}{1.2.1 工作原理:}
+\begin{itemize}
+    \item 多层感知机是一种前馈神经网络(不存在同层/跨层连接)，包含至少一个隐藏层。每一层中的神经元通过权重和偏置与下一层的神经元相连，网络通过非线性激活函数（如ReLU、Sigmoid）将输入映射到输出。
+    \item 网络通过反向传播算法不断调整权重，以最小化损失函数的误差，从而实现分类或回归任务。
+\end{itemize}
+
+\textcolor{blue}{1.2.2 缓解过拟合:}
+\begin{itemize}
+    \item \textbf{早停(early stopping)}：
+    \begin{itemize}
+        \item 若训练误差连续 a 轮的变化小于 b, 则停止训练
+        \item 使用验证集：若训练误差降低、验证误差升高, 则停止训练
+    \end{itemize}
+    \item \textbf{正则化 (regularization)}：在损失函数中加入惩罚项，描述网络复杂度。例如$(1-\lambda)\sum_{i}{w_i^2} $
+    \item \textbf{Dropout}：在训练过程中随机“丢弃”部分神经元，防止网络过度依赖某些节点，增强泛化能力。
+    \item \textbf{数据增强 (Data Augmentation)}：通过对训练数据进行随机变换，增加数据的多样性，从而提升模型的泛化性能。
+\end{itemize}
 
 2.请使用scikit-learn 实现决策树模型, 并扰动决策树的最大深度$max\_ depth$, 一般来说, $max\_ depth$的值越大, 决策树越复杂, 越容易过拟合, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）；
 
@@ -330,14 +373,12 @@ def over_sampling(self):
 
 4.请使用PyTorch 或scikit-learn 实现一个简单的多层感知机, 并通过层数、宽度或者优化轮数控制模型复杂度, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）。
 
-注: 请选择1 至 3 个UCI 机器学习库中的数据集进行实验。
-
-\textbf{\large 解:}
-
 \vspace{3em}
 
 \section*{三. (20 points) 激活函数比较}
 神经网络隐层使用的激活函数一般与输出层不同. 请画出以下几种常见的隐层激活函数的示意图并计算其导数（导数不存在时可指明）, 讨论其优劣（每小题4 points）：
+
+\textcolor{red}{图像见该题目最后}
 
 \begin{enumerate}
     \item Sigmoid 函数, 定义如下
@@ -345,11 +386,30 @@ def over_sampling(self):
         f(x) = \frac{1}{1 + e^{-x}}.
         \label{eq:sigmoid}
     \end{equation}
+
+    \begin{itemize}
+        \item 导数 $f'(x) = f(x)(1 - f(x))$.
+        \item 优缺点
+        \begin{itemize}
+            \item 优点：连续且平滑，输出值范围在 (0, 1) 之间，容易求导。
+            \item 缺点：在极大值或极小值处梯度非常小，容易引发梯度消失问题，训练深层网络时表现不佳。
+        \end{itemize}
+    \end{itemize}
+
     \item 双曲正切函数 (Hyperbolic Tangent Function, Tanh), 定义如下
     \begin{equation}
         f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}.
         \label{eq:tanh}
     \end{equation}
+
+    \begin{itemize}
+        \item 导数 $f'(x) = 1 - f(x)^2$.
+        \item 优缺点
+        \begin{itemize}
+            \item 优点：输出范围为 (-1, 1)，相比于 Sigmoid 函数居中于零，表现更好，避免了 Sigmoid 的零中心问题。
+            \item 缺点：在极大值或极小值处梯度非常小，容易引发梯度消失问题，训练深层网络时表现不佳。
+        \end{itemize}
+    \end{itemize}
 
     \item 修正线性函数 (Rectified Linear Unit, ReLU) 是近年来最为常用的隐层激活函数之一, 其定义如下
     \begin{equation}
@@ -360,11 +420,33 @@ def over_sampling(self):
         \label{eq:relu}
     \end{equation}
 
+    \begin{itemize}
+        \item 导数 $f'(x) = \begin{cases}
+            0, & \text{if } x < 0; \\
+            1, & \text{if } x > 0; \\
+            \text{undefined}, & \text{if } x = 0.
+        \end{cases}$
+        \item 优缺点
+        \begin{itemize}
+            \item 优点：计算简单，在正值区域，m导数为常数加速了训练过程，且在正向传播时避免了梯度消失问题，使得深层网络的训练更加高效。
+            \item 缺点：存在梯度未定义的情况；且在负值区域梯度为 0，导致神经元“死亡”，即当神经元在负值区域时，它的权重不再更新，可能导致模型不够灵活。
+        \end{itemize}
+    \end{itemize}
+
     \item Softplus 函数, 定义如下
     \begin{equation}
         f(x) = \ln(1 + e^x).
         \label{eq:softplus}
     \end{equation}
+
+    \begin{itemize}
+        \item 导数 $f'(x) = \frac{1}{1 + e^{-x}} = Sigmoid(x)$.
+        \item 优缺点
+        \begin{itemize}
+            \item 优点：和 ReLU 梯度相似，但其梯度任意点有定义；且在负值区域具有非零的梯度，可以避免 ReLU 的“死亡神经元”问题。
+            \item 缺点：相比 ReLU 计算代价较高。
+        \end{itemize}
+    \end{itemize}
 
     \item Leaky Rectified Linear Unit (Leaky ReLU) 函数, 定义如下
     \begin{equation}
@@ -375,9 +457,70 @@ def over_sampling(self):
         \label{eq:leaky_relu}
     \end{equation}
     其中 $\alpha$ 为一个较小的正数, 比如 0.01.
+
+    \begin{itemize}
+        \item 导数 $f'(x) = \begin{cases}
+            \alpha, & \text{if } x < 0; \\
+            1, & \text{if } x > 0; \\
+            \text{undefined}, & \text{if } x = 0.
+        \end{cases}$
+        \item 优缺点
+        \begin{itemize}
+            \item 优点：和 ReLU 梯度相似，且计算效率高，在负值区域具有非零的梯度，可以避免 ReLU 的“死亡神经元”问题。
+            \item 缺点：负值区域的梯度仍然非常小，因此负值区域的学习速度较慢；且仍有未定义的梯度。
+        \end{itemize}
+    \end{itemize}
+
 \end{enumerate}
 
-\textbf{\large 解:}
+\subsection*{函数图像如下：}
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob3/img/f1.png}
+        \caption{$f(x) = \frac{1}{1 + e^{-x}}$}
+        \label{fig:sigmoid}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob3/img/f2.png}
+        \caption{$f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$}
+        \label{fig:tanh}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob3/img/f3.png}
+        \caption{$f(x) = \ln(1 + e^x)$}
+        \label{fig:softplus}
+    \end{subfigure}
+    \hfill
+    \newline
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob3/img/f4.png}
+        \caption{
+            $f(x) = \begin{cases}
+                \alpha x, & \text{if } x < 0; \\
+                x, & \text{otherwise}.
+            \end{cases}$
+        }
+        \label{fig:leaky_relu}
+    \end{subfigure}
+    \hspace{0pt}
+    \begin{subfigure}{0.42\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob3/img/f5.png}
+        \caption{$f(x) = \begin{cases}
+            0, & \text{if } x < 0; \\
+            x, & \text{otherwise}.
+            \end{cases}$}
+        \label{fig:ReLU}
+    \end{subfigure}
+    \hfill
+\end{figure}
 
 \vspace{3em}
 
