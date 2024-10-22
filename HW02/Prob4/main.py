@@ -36,6 +36,21 @@ def sigmoid(x):
     return 1 / (1 + np.exp(-x))
 
 
+def bi_cross_entropy_loss(label, pred):
+    """_summary_
+
+    Args:
+        label (np.ndarray): batch_size x 1 (value = 0 or 1)
+        pred (np.ndarray): batch_size x 1
+
+    Returns:
+        float: bi_cross_entropy_loss
+    """
+    return -np.mean(
+        np.log(pred + 1e-8) * label + np.log(1 - pred + 1e-8) * (1 - label)
+    )
+
+
 class NeuralNetwork:
     def __init__(
         self, input_size=2, hidden_size=4, output_size=1, init_method="random"
@@ -43,6 +58,7 @@ class NeuralNetwork:
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
+        self.loss_f = bi_cross_entropy_loss
         np.random.seed(RANDOM_SEED)
 
         # 初始化权重和偏置
@@ -104,20 +120,17 @@ class NeuralNetwork:
         return self.a2
 
     def backward(self, loss):
-        dz2 = loss
-        dW2 = np.dot(self.a1.T, dz2)
-        db2 = np.sum(dz2, axis=0, keepdims=True) 
-        dz1 = np.dot(dz2, self.W2.T) * (self.z1 > 0)
-        dW1 = np.dot(X.T, dz1)
-        db1 = np.sum(dz1, axis=0, keepdims=True)
+        # dz2 = loss
+        # dW2 = np.dot(self.a1.T, dz2)
+        # db2 = np.sum(dz2, axis=0, keepdims=True)
+        # dz1 = np.dot(dz2, self.W2.T) * (self.z1 > 0)
+        # dW1 = np.dot(X.T, dz1)
+        # db1 = np.sum(dz1, axis=0, keepdims=True)
 
         self.W1 -= self.learning_rate * dW1
         self.b1 -= self.learning_rate * db1
         self.W2 -= self.learning_rate * dW2
         self.b2 -= self.learning_rate * db2
-
-    def loss(self, y, y_pred):  # 交叉熵损失函数
-        return -np.mean(y * np.log(y_pred + 1e-8) + (1 - y) * np.log(1 - y_pred + 1e-8))
 
     def train(
         self, X, y, learning_rate=learning_rate, epochs=epochs, batch_size=batch_size
@@ -125,6 +138,16 @@ class NeuralNetwork:
         self.learning_rate = learning_rate
         losses = []
         accuracies = []
+
+        y_label = y.reshape(-1, 1)
+
+        y_pred_train = self.forward(X)
+        train_loss = self.loss_f(y, y_pred_train)
+        train_acc = np.mean((y_pred_train > 0.5) == y_label)
+        losses.append(train_loss)
+        accuracies.append(train_acc)
+        print(f"Init, Loss: {train_loss}, Accuracy: {train_acc}")
+        plot_decision_boundary(self, X, y, "Init")
 
         for epoch in range(1, epochs + 1):
             permutation = np.random.permutation(X.shape[0])
@@ -136,13 +159,13 @@ class NeuralNetwork:
                 y_batch = y_shuffled[i : i + batch_size]
 
                 y_pred = self.forward(X_batch)
-                loss = self.loss(y_batch, y_pred)
+                loss = self.loss_f(y_batch, y_pred)
                 self.backward(loss)
 
             if epoch % 100 == 0:
                 y_pred_train = self.forward(X)
-                train_loss = self.loss(y, y_pred_train)
-                train_acc = np.mean((y_pred_train > 0.5) == y.reshape(-1, 1))
+                train_loss = self.loss_f(y, y_pred_train)
+                train_acc = np.mean((y_pred_train > 0.5) == y_label)
                 losses.append(train_loss)
                 accuracies.append(train_acc)
                 print(f"Epoch {epoch}, Loss: {train_loss}, Accuracy: {train_acc}")
@@ -169,7 +192,7 @@ def plot_decision_boundary(model, X, y, tag=epochs):
 def plot_training_process(losses, accuracies):
     fig, ax1 = plt.subplots()
 
-    color = "tab:red"
+    color = "tab:green"
     ax1.set_xlabel("Epoch")
     ax1.set_ylabel("Loss", color=color)
     ax1.plot(losses, color=color)
