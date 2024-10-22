@@ -28,6 +28,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
+def relu(x):
+    return np.maximum(0, x)
+
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+
 class NeuralNetwork:
     def __init__(
         self, input_size=2, hidden_size=4, output_size=1, init_method="random"
@@ -88,27 +96,20 @@ class NeuralNetwork:
         else:
             raise ValueError("Unsupported initialization method")
 
-    def relu(self, x):
-        return np.maximum(0, x)
-
-    def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-
     def forward(self, X):
         self.z1 = np.dot(X, self.W1) + self.b1
-        self.a1 = self.relu(self.z1)  # 隐藏层使用 ReLU 激活函数
+        self.a1 = relu(self.z1)  # 隐藏层使用 ReLU 激活函数
         self.z2 = np.dot(self.a1, self.W2) + self.b2
-        self.a2 = self.sigmoid(self.z2)  # 输出层使用 Sigmoid 激活函数
+        self.a2 = sigmoid(self.z2)  # 输出层使用 Sigmoid 激活函数
         return self.a2
 
-    def backward(self, X, y, y_pred):
-        m = X.shape[0]
-        dz2 = y_pred - y.reshape(-1, 1)
-        dW2 = np.dot(self.a1.T, dz2) / m
-        db2 = np.sum(dz2, axis=0, keepdims=True) / m
+    def backward(self, loss):
+        dz2 = loss
+        dW2 = np.dot(self.a1.T, dz2)
+        db2 = np.sum(dz2, axis=0, keepdims=True) 
         dz1 = np.dot(dz2, self.W2.T) * (self.z1 > 0)
-        dW1 = np.dot(X.T, dz1) / m
-        db1 = np.sum(dz1, axis=0, keepdims=True) / m
+        dW1 = np.dot(X.T, dz1)
+        db1 = np.sum(dz1, axis=0, keepdims=True)
 
         self.W1 -= self.learning_rate * dW1
         self.b1 -= self.learning_rate * db1
@@ -136,7 +137,7 @@ class NeuralNetwork:
 
                 y_pred = self.forward(X_batch)
                 loss = self.loss(y_batch, y_pred)
-                self.backward(X_batch, y_batch, y_pred)
+                self.backward(loss)
 
             if epoch % 100 == 0:
                 y_pred_train = self.forward(X)
