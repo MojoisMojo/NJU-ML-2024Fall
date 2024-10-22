@@ -81,11 +81,38 @@ class SoftmaxLossLayer(object):
     def get_loss(self, label):  # 计算损失
         self.batch_size = self.prob.shape[0]
         self.label_onehot = np.zeros_like(self.prob)
-        self.label_onehot[np.arange(self.batch_size), label] = 1.0 # 把标签转换为 one-hot 形式，就是只有真实值为 1，其他为 0
+        self.label_onehot[np.arange(self.batch_size), label] = (
+            1.0  # 把标签转换为 one-hot 形式，就是只有真实值为 1，其他为 0
+        )
         loss = -np.sum(np.log(self.prob) * self.label_onehot) / self.batch_size
         return loss
 
     def backward(self):  # 反向传播的计算
         # TODO：softmax 损失层的反向传播，计算本层损失
         bottom_diff = (self.prob - self.label_onehot) / self.batch_size
+        return bottom_diff
+
+
+import numpy as np
+
+
+class SigmoidLossLayer(object):
+    def __init__(self) -> None:
+        print("\tSigmoid loss layer.")
+
+    def forward(self, input):
+        self.prob = 1 / (1 + np.exp(-input))  # Sigmoid 函数
+        return self.prob
+
+    def get_loss(self, label):
+        self.batch_size = self.prob.shape[0]
+        loss = -np.mean(
+            label * np.log(self.prob + 1e-8)
+            + (1 - label) * np.log(1 - self.prob + 1e-8)
+        )
+        return loss
+
+    def backward(self, label):
+        # Sigmoid 损失层的反向传播，计算本层损失
+        bottom_diff = (self.prob - label) / self.batch_size
         return bottom_diff
