@@ -8,18 +8,10 @@ from sklearn.model_selection import train_test_split
 from layers import FullyConnectedLayer, ReLULayer, SigmoidLossLayer
 import logging
 
-RANDOM_SEED = 42
-MNIST_DIR = "../mnist_data"
-TRAIN_DATA = "train-images-idx3-ubyte"
-TRAIN_LABEL = "train-labels-idx1-ubyte"
-TEST_DATA = "t10k-images-idx3-ubyte"
-TEST_LABEL = "t10k-labels-idx1-ubyte"
+from params import RANDOM_SEED
 
-# 生成数据集
-X, y = make_moons(n_samples=1000, noise=0.1, random_state=RANDOM_SEED)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=RANDOM_SEED
-)
+
+from dataloader import X_train, X_test, y_train, y_test
 
 
 class NeuralNetwork(object):
