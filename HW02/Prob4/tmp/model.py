@@ -1,13 +1,6 @@
-"""
-注意：
-1. 这个框架提供了基本的结构，您需要完成所有标记为 'pass' 的函数。
-2. 确保正确实现前向传播、反向传播和梯度更新。
-3. 在比较不同初始化方法时，保持其他超参数不变。
-4. 记得处理数值稳定性问题，例如在计算对数时避免除以零。
-5. 尝试使用不同的学习率（例如 0.01, 0.1, 1），并比较结果。
-6. 在报告中详细讨论您的观察结果和任何有趣的发现。
-"""
+# coding=utf-8
 import numpy as np
+import struct
 import os
 import time
 from layers import FullyConnectedLayer, ReLULayer, SigmoidLossLayer
@@ -168,7 +161,7 @@ if __name__ == "__main__":
     )
     time_stemp = time.strftime("%m%d_%H%M%S", time.localtime())
     btz = 16
-    for e,lr in [(200,0.01),(40,0.1),(40,1)]:
+    for e,lr in [(200,0.01),(40,0.1),(20,1)]:
         for inmethod in ["random","xavier","he"]:
             print("#"*50,f"\ne={e},lr={lr},btz={btz},inmethod={inmethod}")
             nn = main(time_stemp=time_stemp, e=e, lr=lr, btz=btz, inmethod=inmethod)
