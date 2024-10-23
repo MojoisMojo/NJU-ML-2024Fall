@@ -1,9 +1,9 @@
 import numpy as np
-
+import logging
 from utils import relu, sigmoid
 
-from params import RANDOM_SEED, learning_rate, epochs, batch_size, print_iter
-from utils import plot_decision_boundary
+from params import RANDOM_SEED
+from utils import plot_decision_boundary, plot_training_process
 
 
 def bi_cross_entropy_loss(label, prob):
@@ -22,8 +22,20 @@ def bi_cross_entropy_loss(label, prob):
 
 class NeuralNetwork:
     def __init__(
-        self, input_size=2, hidden_size=4, output_size=1, init_method="random"
+        self,
+        learning_rate,
+        epochs,
+        batch_size,
+        print_iter,
+        input_size=2,
+        hidden_size=4,
+        output_size=1,
+        init_method="random",
     ):
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
+        self.epochs = epochs
+        self.print_iter = print_iter
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
@@ -104,41 +116,51 @@ class NeuralNetwork:
         self.W2 -= self.learning_rate * dW2
         self.b2 -= self.learning_rate * db2
 
-    def train(
-        self, X, y, learning_rate=learning_rate, epochs=epochs, batch_size=batch_size
-    ):
-        self.learning_rate = learning_rate
+    def train(self, X, y, save_dir):
+
+        epochs = self.epochs
+        batch_size = self.batch_size
+        print_iter = self.print_iter
+        train_shape_0 = X.shape[0]
+
         losses = []
         accuracies = []
 
-        y_label = y.reshape(-1, 1)
+        y_labels = y.reshape(-1, 1)
 
-        y_pred_train = self.forward(X)
-        train_loss = self.loss_f(y, y_pred_train)
-        train_acc = np.mean(np.round(y_pred_train) == y_label)
-        losses.append(train_loss)
-        accuracies.append(train_acc)
-        print(f"Init, Loss: {train_loss}, Accuracy: {train_acc}")
-        plot_decision_boundary(self, X, y, "Init")
+        def cal_loss_acc(tag):
+            nonlocal losses, accuracies
+            prob = self.forward(X)
+            loss = self.sigmoid.get_loss(y)
+            pred_labels = np.round(prob)
+            accuracy = np.mean(pred_labels == y_labels)
+            losses.append(loss)
+            accuracies.append(accuracy)
+            logging.info(f"{tag}, loss: {loss}, accuracy: {accuracy}")
+            plot_decision_boundary(self, X, y, tag, save_dir)
+
+        cal_loss_acc("Init")
 
         for epoch in range(1, epochs + 1):
-            permutation = np.random.permutation(X.shape[0])
+            permutation = np.random.permutation(train_shape_0)
             X_shuffled = X[permutation]
-            y_shuffled = y[permutation]
+            y_shuffled = y_labels[permutation]
 
-            for i in range(0, X.shape[0], batch_size):
+            for i in range(0, train_shape_0, batch_size):
                 X_batch = X_shuffled[i : i + batch_size]
-                y_batch = y_shuffled[i : i + batch_size].reshape(-1, 1)
+                y_batch = y_shuffled[i : i + batch_size]
 
                 y_pred = self.forward(X_batch)
                 self.backward(X_batch, y_batch, y_pred)
 
             if epoch % print_iter == 0:
-                y_pred_train = self.forward(X)
-                train_loss = self.loss_f(y, y_pred_train)
-                train_acc = np.mean(np.round(y_pred_train) == y_label)
-                losses.append(train_loss)
-                accuracies.append(train_acc)
-                print(f"Epoch {epoch}, Loss: {train_loss}, Accuracy: {train_acc}")
-                plot_decision_boundary(self, X, y, f"Epoch{epoch}")
+                cal_loss_acc(f"Epoch {epoch}")
+        plot_training_process(losses, accuracies, save_dir)
         return losses, accuracies
+
+    def evaluate(self, X, y):
+        y_label = y.reshape(-1, 1)
+        y_pred = self.forward(X)
+        test_acc = np.mean(np.round(y_pred) == y_label)
+        logging.info(f"Accuracy in test set: {test_acc}")
+        return test_acc

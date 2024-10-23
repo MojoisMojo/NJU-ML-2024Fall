@@ -10,42 +10,59 @@
 
 import os
 
-from utils import plot_decision_boundary, plot_training_process, prefix
+from utils import plot_decision_boundary, plot_training_process
 
 from dataloader import X_train, X_test, y_train, y_test
 
-from model_old import NeuralNetwork
+# from model_old import NeuralNetwork
+from model import NeuralNetwork
+
 
 # 主函数
-def main():
-    nn = NeuralNetwork(init_method=init_method)
+def main(
+    learning_rate=0.01,
+    epochs=200,
+    batch_size=16,
+    init_method="random",
+    save_dir="output",
+):
+    nn = NeuralNetwork(
+        epochs=epochs,
+        learning_rate=learning_rate,
+        batch_size=batch_size,
+        init_method=init_method,
+        print_iter=epochs // 20,
+    )
     losses, accuracies = nn.train(
         X_train,
         y_train,
-        learning_rate=learning_rate,
-        epochs=epochs,
-        batch_size=batch_size,
+        save_dir=save_dir,
     )
-    plot_training_process(losses, accuracies)
-    plot_decision_boundary(nn, X_test, y_test, tag="test")
+    accuracies = nn.evaluate(X_test, y_test)
+    print(f"Accuracy: {accuracies}")
+    plot_decision_boundary(nn, X_test, y_test, tag="test", save_dir=save_dir)
 
+
+from datetime import datetime
+import logging
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(message)s",
+    )
     learning_rate = 0.01
     epochs = 200
     batch_size = 16
     print_iter = 20
     init_method = "random"
-    prefix = f"output/lr-{learning_rate}_bs-{batch_size}_im-{init_method}"
-    os.makedirs(f"{prefix}", exist_ok=True)
-    main()
-    # for m in ["random", "xavier", "he"]:
-    #     init_method = m
-    #     for lr in [0.01, 0.1, 1]:
-    #         learning_rate = lr
-    #         for batch in [8, 16, 32]:
-    #             batch_size = batch
-    #             prefix = f"output/lr-{lr}_bs-{batch}_im-{m}"
-    #             print(f"Running lr={lr}, bs={batch}, init_method={m}")
-    #             os.makedirs(f"{prefix}", exist_ok=True)
-    #             main()
+    timestemp = datetime.now().strftime("%m%d_%H%M%S")
+    save_dir = f"output/{timestemp}/lr-{learning_rate}_bs-{batch_size}_im-{init_method}"
+    os.makedirs(f"{save_dir}", exist_ok=True)
+    main(
+        learning_rate=learning_rate,
+        epochs=epochs,
+        batch_size=batch_size,
+        init_method=init_method,
+        save_dir=save_dir,
+    )

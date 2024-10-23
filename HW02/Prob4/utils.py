@@ -1,8 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-prefix = ""
-
 
 def relu(x):
     return np.maximum(0, x)
@@ -13,7 +11,8 @@ def sigmoid(x):
 
 
 # 辅助函数
-def plot_decision_boundary(model, X, y, tag):
+def plot_decision_boundary(model, X, y, tag, save_dir):
+    prefix = save_dir
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.01), np.arange(y_min, y_max, 0.01))
@@ -27,7 +26,9 @@ def plot_decision_boundary(model, X, y, tag):
     plt.close()
 
 
-def plot_training_process(losses, accuracies):
+def plot_training_process(losses, accuracies, save_dir):
+    prefix = save_dir
+
     fig, ax1 = plt.subplots()
 
     color = "tab:green"

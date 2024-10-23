@@ -8,8 +8,9 @@ from sklearn.model_selection import train_test_split
 from layers import FullyConnectedLayer, ReLULayer, SigmoidLossLayer
 import logging
 
-from params import RANDOM_SEED
+from params import RANDOM_SEED, learning_rate, epochs, batch_size, print_iter
 
+from utils import plot_decision_boundary, plot_training_process
 
 from dataloader import X_train, X_test, y_train, y_test
 
@@ -17,24 +18,26 @@ from dataloader import X_train, X_test, y_train, y_test
 class NeuralNetwork(object):
     def __init__(
         self,
-        batch_size=16,
+        learning_rate,
+        epochs,
+        batch_size,
+        print_iter,
         input_size=2,
         hidden_size=4,
         output_size=1,
-        max_epoch=1000,
-        lr=0.01,
         init_method="random",
-        print_iter=100,
     ):
         self.batch_size = batch_size
         self.input_size = input_size
         self.hidden_size = hidden_size
         self.output_size = output_size
-        self.max_epoch = max_epoch
-        self.lr = lr
+        self.epochs = epochs
+        self.learning_rate = learning_rate
         self.init_method = init_method
         self.print_iter = print_iter
         np.random.seed(RANDOM_SEED)
+        self.build_model()
+        self.init_model()
 
     def load_data(self):
         self.train_X = X_train
@@ -79,55 +82,76 @@ class NeuralNetwork(object):
         dh1 = self.relu1.backward(dh2)
         dh1 = self.fc1.backward(dh1)
         for layer in self.update_layer_list:
-            layer.update_param(self.lr)
+            layer.update_param(self.learning_rate)
 
-    def train(self):
-        train_shape_0 = self.train_X.shape[0]
+    def train(self, X, y, save_dir):
+
+        epochs = self.epochs
+
+        train_shape_0 = X.shape[0]
         batch_size = self.batch_size
         logging.info("Start training...")
 
-        prob = self.forward(self.train_X)
-        loss = self.sigmoid.get_loss(self.train_y)
-        pred_labels = np.round(prob)
-        accuracy = np.mean(pred_labels == self.train_y)
-        logging.info(f"Init, loss: {loss}, accuracy: {accuracy}")
+        losses = []
+        accuracies = []
 
-        for idx_epoch in range(1, 1 + self.max_epoch):
+        y_labels = y.reshape(-1, 1)
+
+        def cal_loss_acc(tag):
+            nonlocal losses, accuracies
+            prob = self.forward(X)
+            loss = self.sigmoid.get_loss(y)
+            pred_labels = np.round(prob)
+            accuracy = np.mean(pred_labels == y_labels)
+            losses.append(loss)
+            accuracies.append(accuracy)
+            logging.info(f"{tag}, loss: {loss}, accuracy: {accuracy}")
+            plot_decision_boundary(self, X, y, tag, save_dir)
+
+        cal_loss_acc("Init")
+
+        for epoch in range(1, 1 + epochs):
             permutation = np.random.permutation(train_shape_0)
-            X_shuffled = self.train_X[permutation]
-            y_shuffled = self.train_y[permutation]
-            for idx_batch in range(0, train_shape_0, batch_size):
-                batch_X = X_shuffled[idx_batch : idx_batch + batch_size]
-                batch_y = y_shuffled[idx_batch : idx_batch + batch_size]
+            X_shuffled = X[permutation]
+            y_shuffled = y_labels[permutation]
+            for i in range(0, train_shape_0, batch_size):
+                batch_X = X_shuffled[i : i + batch_size]
+                batch_y = y_shuffled[i : i + batch_size]
+                # 这里必须先forward,get_loss再backward
+                # 因为backward中会用到forward的结果
                 prob = self.forward(batch_X)
                 loss = self.sigmoid.get_loss(batch_y)
                 self.backward()
-            if idx_epoch % self.print_iter == 0:
-                prob = self.forward(self.train_X)
-                loss = self.sigmoid.get_loss(self.train_y)
-                pred_labels = np.round(prob)
-                accuracy = np.mean(pred_labels == self.train_y)
-                logging.info(f"Epoch {idx_epoch}, loss: {loss}, accuracy: {accuracy}")
+            if epoch % self.print_iter == 0:
+                cal_loss_acc(f"Epoch{epoch}")
+        plot_training_process(losses, accuracies, save_dir)
+        return losses, accuracies
 
-    def evaluate(self):
-        prob = self.forward(self.test_X)
-        pred_labels = np.round(prob)
-        accuracy = np.mean(pred_labels == self.test_y)
-        logging.info("Accuracy in test set: %f" % accuracy)
-        return accuracy
+    def evaluate(self, X, y):
+        y_label = y.reshape(-1, 1)
+        y_pred = self.forward(X)
+        test_acc = np.mean(np.round(y_pred) == y_label)
+        logging.info(f"Accuracy in test set: {test_acc}")
+        return test_acc
 
 
-def build_neural_network(e, lr, btz, inmethod):
+def main_task(e, lr, btz, inmethod):
     time_stemp = time.strftime("%m%d_%H%M%S", time.localtime())
-    nn = NeuralNetwork(max_epoch=e, lr=lr, batch_size=btz, init_method=inmethod, print_iter=10)
-    nn.load_data()
-    nn.build_model()
-    nn.init_model()
-    nn.train()
+    nn = NeuralNetwork(
+        learning_rate=lr,
+        epochs=e,
+        batch_size=btz,
+        print_iter=e // 20,
+        init_method=inmethod,
+    )
+
     mdir = f"./output/{time_stemp}"
     os.makedirs(mdir, exist_ok=True)
+    nn.train(X_train, y_train, save_dir=mdir)
     nn.save(f"{mdir}/e{e}_lr{lr}_btz{btz}_me{inmethod}.npy")
     logging.info(f"Model saved to {mdir}/e{e}_lr{lr}_btz{btz}_me{inmethod}.npy")
+    acc = nn.evaluate(X_test, y_test)
+    print(f"Accuracy: {acc}")
     return nn
 
 
@@ -136,6 +160,5 @@ if __name__ == "__main__":
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
-    nn = build_neural_network(e=200, lr=0.1, btz=16, inmethod="random")
-    acc = nn.evaluate()
-    print(f"Accuracy: {acc}")
+    nn = main_task(e=200, lr=0.1, btz=16, inmethod="random")
+
