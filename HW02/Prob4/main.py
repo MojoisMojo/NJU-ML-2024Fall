@@ -8,207 +8,13 @@
 6. 在报告中详细讨论您的观察结果和任何有趣的发现。
 """
 
-RANDOM_SEED = 42
-learning_rate = None
-epochs = None
-batch_size = None
-init_method = ""
-prefix = ""
-
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_moons
-from sklearn.model_selection import train_test_split
 import os
 
-# 生成数据集
-X, y = make_moons(n_samples=1000, noise=0.1, random_state=RANDOM_SEED)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=RANDOM_SEED
-)
+from utils import plot_decision_boundary, plot_training_process, prefix
 
+from dataloader import X_train, X_test, y_train, y_test
 
-def relu(x):
-    return np.maximum(0, x)
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-def bi_cross_entropy_loss(label, pred):
-    """_summary_
-
-    Args:
-        label (np.ndarray): batch_size x 1 (value = 0 or 1)
-        pred (np.ndarray): batch_size x 1
-
-    Returns:
-        float: bi_cross_entropy_loss
-    """
-    return -np.mean(
-        np.log(pred + 1e-8) * label + np.log(1 - pred + 1e-8) * (1 - label)
-    )
-
-
-class NeuralNetwork:
-    def __init__(
-        self, input_size=2, hidden_size=4, output_size=1, init_method="random"
-    ):
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.output_size = output_size
-        self.loss_f = bi_cross_entropy_loss
-        np.random.seed(RANDOM_SEED)
-
-        # 初始化权重和偏置
-        if init_method == "random":  # 随机初始化：
-            """
-            W_ij ~ U(-0.5, 0.5)
-            """
-            self.W1 = np.random.uniform(-0.5, 0.5, (self.input_size, self.hidden_size))
-            self.b1 = np.random.uniform(-0.5, 0.5, (1, self.hidden_size))
-            self.W2 = np.random.uniform(-0.5, 0.5, (self.hidden_size, self.output_size))
-            self.b2 = np.random.uniform(-0.5, 0.5, (1, self.output_size))
-        elif init_method == "xavier":  # Xavier 初始化：根据前一层的节点数进行缩放。
-            """
-            W_ij ~ U(-sqrt(6/(ni+no)), sqrt(6/(ni+no)))
-            """
-            cal = lambda ni, no: (lambda x: (-x, x))(np.sqrt(6 / (ni + no)))
-            self.W1 = np.random.uniform(
-                *cal(self.input_size, self.hidden_size),
-                (self.input_size, self.hidden_size),
-            )
-            self.b1 = np.random.uniform(
-                *cal(self.input_size, self.hidden_size),
-                (1, self.hidden_size),
-            )
-            self.W2 = np.random.uniform(
-                *cal(self.hidden_size, self.output_size),
-                (self.hidden_size, self.output_size),
-            )
-            self.b2 = np.random.uniform(
-                *cal(self.hidden_size, self.output_size),
-                (1, self.output_size),
-            )
-        elif (
-            init_method == "he"
-        ):  # He 初始化假设每一层都是线性的，并且考虑了 ReLU 激活函数的特性
-            """
-            W_ij ~ N(0, sqrt(2/ni))
-            """
-            self.W1 = np.random.normal(
-                0, np.sqrt(2 / self.input_size), (self.input_size, self.hidden_size)
-            )
-            self.b1 = np.random.normal(
-                0, np.sqrt(2 / self.input_size), (1, self.hidden_size)
-            )
-            self.W2 = np.random.normal(
-                0, np.sqrt(2 / self.hidden_size), (self.hidden_size, self.output_size)
-            )
-            self.b2 = np.random.normal(
-                0, np.sqrt(2 / self.hidden_size), (1, self.output_size)
-            )
-        else:
-            raise ValueError("Unsupported initialization method")
-
-    def forward(self, X):
-        self.z1 = np.dot(X, self.W1) + self.b1
-        self.a1 = relu(self.z1)  # 隐藏层使用 ReLU 激活函数
-        self.z2 = np.dot(self.a1, self.W2) + self.b2
-        self.a2 = sigmoid(self.z2)  # 输出层使用 Sigmoid 激活函数
-        return self.a2
-
-    def backward(self, loss):
-        # dz2 = loss
-        # dW2 = np.dot(self.a1.T, dz2)
-        # db2 = np.sum(dz2, axis=0, keepdims=True)
-        # dz1 = np.dot(dz2, self.W2.T) * (self.z1 > 0)
-        # dW1 = np.dot(X.T, dz1)
-        # db1 = np.sum(dz1, axis=0, keepdims=True)
-
-        self.W1 -= self.learning_rate * dW1
-        self.b1 -= self.learning_rate * db1
-        self.W2 -= self.learning_rate * dW2
-        self.b2 -= self.learning_rate * db2
-
-    def train(
-        self, X, y, learning_rate=learning_rate, epochs=epochs, batch_size=batch_size
-    ):
-        self.learning_rate = learning_rate
-        losses = []
-        accuracies = []
-
-        y_label = y.reshape(-1, 1)
-
-        y_pred_train = self.forward(X)
-        train_loss = self.loss_f(y, y_pred_train)
-        train_acc = np.mean((y_pred_train > 0.5) == y_label)
-        losses.append(train_loss)
-        accuracies.append(train_acc)
-        print(f"Init, Loss: {train_loss}, Accuracy: {train_acc}")
-        plot_decision_boundary(self, X, y, "Init")
-
-        for epoch in range(1, epochs + 1):
-            permutation = np.random.permutation(X.shape[0])
-            X_shuffled = X[permutation]
-            y_shuffled = y[permutation]
-
-            for i in range(0, X.shape[0], batch_size):
-                X_batch = X_shuffled[i : i + batch_size]
-                y_batch = y_shuffled[i : i + batch_size]
-
-                y_pred = self.forward(X_batch)
-                loss = self.loss_f(y_batch, y_pred)
-                self.backward(loss)
-
-            if epoch % 100 == 0:
-                y_pred_train = self.forward(X)
-                train_loss = self.loss_f(y, y_pred_train)
-                train_acc = np.mean((y_pred_train > 0.5) == y_label)
-                losses.append(train_loss)
-                accuracies.append(train_acc)
-                print(f"Epoch {epoch}, Loss: {train_loss}, Accuracy: {train_acc}")
-            if epoch % 1000 == 0:
-                plot_decision_boundary(self, X, y, epoch)
-        return losses, accuracies
-
-
-# 辅助函数
-def plot_decision_boundary(model, X, y, tag=epochs):
-    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
-    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
-    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.01), np.arange(y_min, y_max, 0.01))
-    Z = model.forward(np.c_[xx.ravel(), yy.ravel()])
-    Z = Z.reshape(xx.shape)
-    plt.contourf(xx, yy, Z, alpha=0.8)
-    plt.scatter(X[:, 0], X[:, 1], c=y, edgecolors="k", marker="o")
-    plt.title(f"Decision Boundary {prefix.split('/')[-1]}")
-    plt.savefig(f"{prefix}/decision_boundary_ep-{tag}.png")
-    # plt.show()
-    plt.close()
-
-
-def plot_training_process(losses, accuracies):
-    fig, ax1 = plt.subplots()
-
-    color = "tab:green"
-    ax1.set_xlabel("Epoch")
-    ax1.set_ylabel("Loss", color=color)
-    ax1.plot(losses, color=color)
-    ax1.tick_params(axis="y", labelcolor=color)
-
-    ax2 = ax1.twinx()
-    color = "tab:blue"
-    ax2.set_ylabel("Accuracy", color=color)
-    ax2.plot(accuracies, color=color)
-    ax2.tick_params(axis="y", labelcolor=color)
-
-    fig.tight_layout()
-    plt.savefig(f"{prefix}/training_process.png")
-    # plt.show()
-    plt.close()
-
+from model_old import NeuralNetwork
 
 # 主函数
 def main():
@@ -225,13 +31,21 @@ def main():
 
 
 if __name__ == "__main__":
-    for m in ["random", "xavier", "he"]:
-        init_method = m
-        for lr in [0.01, 0.1, 1]:
-            learning_rate = lr
-            for batch in [8, 16, 32]:
-                batch_size = batch
-                prefix = f"output/lr-{lr}_bs-{batch}_im-{m}"
-                print(f"Running lr={lr}, bs={batch}, init_method={m}")
-                os.makedirs(f"{prefix}", exist_ok=True)
-                main()
+    learning_rate = 0.01
+    epochs = 200
+    batch_size = 16
+    print_iter = 20
+    init_method = "random"
+    prefix = f"output/lr-{learning_rate}_bs-{batch_size}_im-{init_method}"
+    os.makedirs(f"{prefix}", exist_ok=True)
+    main()
+    # for m in ["random", "xavier", "he"]:
+    #     init_method = m
+    #     for lr in [0.01, 0.1, 1]:
+    #         learning_rate = lr
+    #         for batch in [8, 16, 32]:
+    #             batch_size = batch
+    #             prefix = f"output/lr-{lr}_bs-{batch}_im-{m}"
+    #             print(f"Running lr={lr}, bs={batch}, init_method={m}")
+    #             os.makedirs(f"{prefix}", exist_ok=True)
+    #             main()
