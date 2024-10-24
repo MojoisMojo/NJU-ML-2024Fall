@@ -7,6 +7,7 @@
 5. 尝试使用不同的学习率（例如 0.01, 0.1, 1），并比较结果。
 6. 在报告中详细讨论您的观察结果和任何有趣的发现。
 """
+
 import numpy as np
 import os
 import time
@@ -141,9 +142,9 @@ class NeuralNetwork(object):
 def main(time_stemp, e, lr, btz, inmethod):
     mdir = f"./output/{time_stemp}/e{e}_lr{lr}_btz{btz}_{inmethod}"
     os.makedirs(mdir, exist_ok=True)
-
+    print_iter = e // 20
     nn = NeuralNetwork(
-        max_epoch=e, lr=lr, batch_size=btz, init_method=inmethod, print_iter=e // 20
+        max_epoch=e, lr=lr, batch_size=btz, init_method=inmethod, print_iter=print_iter
     )
 
     nn.load_data()
@@ -152,7 +153,7 @@ def main(time_stemp, e, lr, btz, inmethod):
 
     losses, accuracies = nn.train(save_dir=mdir)
 
-    plot_training_process(losses, accuracies, mdir)
+    plot_training_process(losses, accuracies, mdir, print_iter)
     nn.save(f"{mdir}/model.npy")
     logging.info(f"Model saved to {mdir}/model.npy")
     acc = nn.evaluate()
@@ -168,7 +169,8 @@ if __name__ == "__main__":
     )
     time_stemp = time.strftime("%m%d_%H%M%S", time.localtime())
     btz = 16
-    for e,lr in [(200,0.01),(40,0.1),(40,1)]:
-        for inmethod in ["random","xavier","he"]:
-            print("#"*50,f"\ne={e},lr={lr},btz={btz},inmethod={inmethod}")
-            nn = main(time_stemp=time_stemp, e=e, lr=lr, btz=btz, inmethod=inmethod)
+    nn = main(time_stemp=time_stemp, e=1000, lr=0.01, btz=btz, inmethod="he")
+    # for e,lr in [(200,0.01),(100,0.1),(50,1)]:
+    #     for inmethod in ["random","xavier","he"]:
+    #         print("#"*50,f"\ne={e},lr={lr},btz={btz},inmethod={inmethod}")
+    #         nn = main(time_stemp=time_stemp, e=e, lr=lr, btz=btz, inmethod=inmethod)

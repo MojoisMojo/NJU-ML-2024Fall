@@ -33,21 +33,21 @@ def plot_decision_boundary(model, X, y, tag, save_dir):
     plt.close()
 
 
-def plot_training_process(losses, accuracies, save_dir):
+def plot_training_process(losses, accuracies, save_dir, interval):
     prefix = save_dir
-
+    epochs = [interval * i for i in range(len(losses))]
     fig, ax1 = plt.subplots()
 
     color = "tab:green"
     ax1.set_xlabel("Epoch")
     ax1.set_ylabel("Loss", color=color)
-    ax1.plot(losses, color=color)
+    ax1.plot(epochs, losses, color=color)
     ax1.tick_params(axis="y", labelcolor=color)
 
     ax2 = ax1.twinx()
     color = "tab:blue"
     ax2.set_ylabel("Accuracy", color=color)
-    ax2.plot(accuracies, color=color)
+    ax2.plot(epochs, accuracies, color=color)
     ax2.tick_params(axis="y", labelcolor=color)
 
     fig.tight_layout()
