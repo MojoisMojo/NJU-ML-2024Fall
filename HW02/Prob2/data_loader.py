@@ -1,6 +1,7 @@
-from sklearn.datasets import load_iris, load_breast_cancer, load_digits
+from sklearn.datasets import load_iris, load_breast_cancer, load_digits, make_moons
+from params import RAND_SEED
 
-dataset_names = ["iris", "bcancer", "digits", "car_eval"]
+dataset_names = ["iris", "bcancer", "digits", "car_eval", "moon"]
 
 
 def get_data(dataset_name):
@@ -9,6 +10,7 @@ def get_data(dataset_name):
         get_breast_cancer_data,
         get_digits_data,
         get_car_eval_data,
+        get_moon_data,
     ]
     table = dict(zip(dataset_names, dataset_getters))
     if dataset_name not in table:
@@ -32,6 +34,10 @@ def get_digits_data():
     data = load_digits()
     X, y = data.data, data.target
     return X, y
+
+
+def get_moon_data():
+    return make_moons(n_samples=3000, noise=0.31, random_state=RAND_SEED)
 
 
 def get_car_eval_data():

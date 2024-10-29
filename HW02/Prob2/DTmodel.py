@@ -13,10 +13,10 @@ class PrePrunDTModel:
 
     def train(self, X_train, y_train):
         params = {
-            "max_depth": np.arange(2, 12, 2),
+            "max_depth": np.arange(2, 20, 2),
             "max_leaf_nodes": np.arange(10, 30, 2),
-            "min_samples_split": [2, 3, 4],
-            "min_samples_leaf": [1, 2],
+            "min_samples_split": [2, 3, 4, 5],
+            "min_samples_leaf": [1, 2, 3],
         }
 
         clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)

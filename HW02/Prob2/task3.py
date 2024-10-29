@@ -59,7 +59,7 @@ def task3(output_path, X, y, dname=None):
         print(f"后剪枝的决策树准确率: {accuracy_postpruned}")
         print(f"未剪枝 vs 后剪枝 p值: {p_value_unpruned_postpruned}")
 
-    # prepruned_task()
+    prepruned_task()
     postpruned_task()
 
 
@@ -70,6 +70,16 @@ def main():
 
 
 if __name__ == "__main__":
-    dname = "digits"
+    dname = "moon"
     X, y = get_data(dname)
     task3("output", X, y, dname=dname)
+    # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED
+    """
+    未剪枝的决策树准确率: 0.8788888888888889
+    Best params: {'max_depth': 8, 'max_leaf_nodes': 24, 'min_samples_leaf': 2, 'min_samples_split': 2}, Best score: 0.9061904761904762
+    预剪枝的决策树准确率: 0.8966666666666666
+    未剪枝 vs 预剪枝 p值: 0.0730805800497277
+    Best params: {'ccp_alpha': 0.0030278881665889573}, Best score: 0.9047619047619048
+    后剪枝的决策树准确率: 0.8933333333333333
+    未剪枝 vs 后剪枝 p值: 0.01231782821614784
+    """
