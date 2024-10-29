@@ -1,25 +1,47 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
-from constants import RAND_SEED
+from params import RAND_SEED, CRITERION
 import logging
+import numpy as np
+from sklearn.model_selection import GridSearchCV
 
 
 class PrePrunDTModel:
-    def __init__(self):
+    def __init__(self, criterion=CRITERION):
         self.model = None
+        self.criterion = criterion
 
     def train(self, X_train, y_train):
-        # 划分验证集
-        X_train, X_val, y_train, y_val = train_test_split(
-            X_train, y_train, test_size=0.2, random_state=RAND_SEED
-        )
-        models = []
-        for md in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 18, 22, 26, 30]:
-            tree = DecisionTreeClassifier(max_depth=md, random_state=RAND_SEED)
-            tree.fit(X_train, y_train)
-            models.append((tree, tree.score(X_val, y_val)))
-            logging.info(f"Max depth: {md}, Accuracy: {models[-1][1]}")
-        m, bestscore = max(models, key=lambda x: x[1])
-        self.model: DecisionTreeClassifier = m
-        print(f"Best max depth: {self.model.get_depth()}, Accuracy: {bestscore}")
-        return self.model, bestscore
+        params = {
+            "max_depth": np.arange(2, 12, 2),
+            "max_leaf_nodes": np.arange(10, 30, 2),
+            "min_samples_split": [2, 3, 4],
+            "min_samples_leaf": [1, 2],
+        }
+
+        clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
+        gcv = GridSearchCV(estimator=clf, param_grid=params) # 默认 使用 5 折 交叉验证 (cv=5)
+        gcv.fit(X_train, y_train)
+
+        self.model = gcv.best_estimator_
+        print(f"Best params: {gcv.best_params_}, Best score: {gcv.best_score_}")
+        return self.model
+
+class PostPrunDTModel:
+    def __init__(self, criterion=CRITERION):
+        self.model = None
+        self.criterion = criterion
+
+    def train(self, X_train, y_train):
+        clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
+        clf.fit(X_train, y_train)
+        path = clf.cost_complexity_pruning_path(X_train, y_train)
+        ccp_alphas = path.ccp_alphas
+        params = {
+            "ccp_alpha": ccp_alphas
+        }
+        gcv = GridSearchCV(estimator=clf, param_grid=params) # 默认 使用 5 折 交叉验证 (cv=5)
+        gcv.fit(X_train, y_train)
+        self.model = gcv.best_estimator_
+        print(f"Best params: {gcv.best_params_}, Best score: {gcv.best_score_}")
+        return self.model

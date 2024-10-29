@@ -1,6 +1,6 @@
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits
 
-dataset_names = ["iris", "breast_cancer", "digits", "car_eval"]
+dataset_names = ["iris", "bcancer", "digits", "car_eval"]
 
 
 def get_data(dataset_name):

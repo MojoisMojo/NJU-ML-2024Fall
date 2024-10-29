@@ -6,7 +6,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from data_loader import dataset_names, get_data
 import os
-from constants import RAND_SEED, TEST_SIZE
+from params import RAND_SEED, TEST_SIZE, CRITERION
 
 MAX_DEPTH = 30
 
@@ -49,7 +49,9 @@ def task2(output_path, X, y, dname=None):
 
     # 训练并评估决策树模型
     for max_depth in max_depths:
-        clf = DecisionTreeClassifier(max_depth=max_depth, random_state=RAND_SEED)
+        clf = DecisionTreeClassifier(
+            max_depth=max_depth, random_state=RAND_SEED, criterion=CRITERION
+        )
         clf.fit(X_train, y_train)
 
         # 计算训练集精度

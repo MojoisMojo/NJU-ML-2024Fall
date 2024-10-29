@@ -1,2 +1,0 @@
-RAND_SEED = 14
-TEST_SIZE = 0.2
