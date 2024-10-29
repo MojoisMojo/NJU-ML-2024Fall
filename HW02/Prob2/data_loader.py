@@ -1,7 +1,8 @@
 from sklearn.datasets import load_iris, load_breast_cancer, load_digits, make_moons
 from params import RAND_SEED
+import pandas as pd
 
-dataset_names = ["iris", "bcancer", "digits", "car_eval", "moon"]
+dataset_names = ["iris", "bcancer", "digits", "car_eval", "moon", "aincome"]
 
 
 def get_data(dataset_name):
@@ -11,6 +12,7 @@ def get_data(dataset_name):
         get_digits_data,
         get_car_eval_data,
         get_moon_data,
+        get_adult_income_data,
     ]
     table = dict(zip(dataset_names, dataset_getters))
     if dataset_name not in table:
@@ -42,3 +44,10 @@ def get_moon_data():
 
 def get_car_eval_data():
     pass
+
+
+def get_adult_income_data():
+    # 导入相关库
+    # -*- coding:utf-8 -*-
+
+    # 读取数据 TBC
