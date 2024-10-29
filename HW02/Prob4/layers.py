@@ -2,8 +2,8 @@ import numpy as np
 
 """
 实现参考
-    CS188: Introduction to Artificial Intelligence
     知乎:  https://zhuanlan.zhihu.com/p/377634925
+    CS188: Introduction to Artificial Intelligence
 """
 
 
@@ -53,12 +53,16 @@ class FullyConnectedLayer(object):
 
     def forward(self, input):
         self.input = input
-        self.output = np.matmul(input, self.weight) + self.bias
+        self.output = (input @ self.weight) + self.bias
         return self.output
 
     def backward(self, top_diff):
+        # input x w + b = output  
+        # dtdiff/dw = input
         self.d_weight = np.dot(self.input.T, top_diff)
+        # dtdiff/db = 1
         self.d_bias = np.sum(top_diff, axis=0, keepdims=True)
+        # bdiff * w = tdiff
         bottom_diff = np.dot(top_diff, self.weight.T)
         return bottom_diff
 
@@ -96,7 +100,6 @@ class SigmoidLossLayer(object):
         print("\tSigmoid loss layer.")
 
     def forward(self, input):  # 前向传播的计算
-        # TODO：softmax 损失层的前向传播，计算输出结果
         self.prob = 1 / (1 + np.exp(-input))
         return self.prob
 

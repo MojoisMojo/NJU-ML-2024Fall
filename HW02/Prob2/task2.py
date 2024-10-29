@@ -4,13 +4,14 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
-from data_loader import DataLoader
+from data_loader import dataset_names, get_data
 import os
 from constants import RAND_SEED, TEST_SIZE
 
 MAX_DEPTH = 30
 
 task2_output = None
+
 
 def print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies):
     # 绘制训练集和测试集精度随 max_depth 变化的曲线
@@ -26,10 +27,12 @@ def print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies):
     plt.savefig(f"{task2_output}/AccuracyVsMaxDepth_{MAX_DEPTH}.png")
 
 
-def task2(output_path, X, y):
+def task2(output_path, X, y, dname=None):
     global task2_output
     task2_output = f"{output_path}/task2"
-    
+    if dname:
+        task2_output = f"{task2_output}/{dname}"
+
     os.makedirs(task2_output, exist_ok=True)
 
     # 划分训练集和测试集
@@ -62,12 +65,17 @@ def task2(output_path, X, y):
         print(
             f"Max Depth: {max_depth}, Train Accuracy: {train_accuracy:.4f}, Test Accuracy: {test_accuracy:.4f}"
         )
-        
-        print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies)
+
+    print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies)
+
+
+def main():
+    for dataset_name in dataset_names:
+        X, y = get_data(dataset_name)
+        task2("output", X, y, dname=dataset_name)
+
 
 if __name__ == "__main__":
-    # 加载数据集
-    data = DataLoader("data.csv")
-    X, y = data.X, data.y
-
-    task2("output", X, y)
+    dataset_name = dataset_names[2]
+    X, y = get_data(dataset_name)
+    task2(f"output", X, y, dname=dataset_name)

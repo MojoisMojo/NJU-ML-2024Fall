@@ -1,60 +1,14 @@
-
-
-import os
-
-from utils import plot_decision_boundary, plot_training_process
-
-from dataloader import X_train, X_test, y_train, y_test
-
-# from model_old import NeuralNetwork
-from model import NeuralNetwork
-
-
-# 主函数
-def main(
-    learning_rate=0.01,
-    epochs=200,
-    batch_size=16,
-    init_method="random",
-    save_dir="output",
-):
-    nn = NeuralNetwork(
-        epochs=epochs,
-        learning_rate=learning_rate,
-        batch_size=batch_size,
-        init_method=init_method,
-        print_iter=epochs // 20,
-    )
-    losses, accuracies = nn.train(
-        X_train,
-        y_train,
-        save_dir=save_dir,
-    )
-    accuracies = nn.evaluate(X_test, y_test)
-    print(f"Accuracy: {accuracies}")
-    plot_decision_boundary(nn, X_test, y_test, tag="test", save_dir=save_dir)
-
-
-from datetime import datetime
+from model import main
 import logging
-
+import time
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
     )
-    learning_rate = 0.01
-    epochs = 200
-    batch_size = 16
-    print_iter = 20
-    init_method = "random"
-    timestemp = datetime.now().strftime("%m%d_%H%M%S")
-    save_dir = f"output/{timestemp}/lr-{learning_rate}_bs-{batch_size}_im-{init_method}"
-    os.makedirs(f"{save_dir}", exist_ok=True)
-    main(
-        learning_rate=learning_rate,
-        epochs=epochs,
-        batch_size=batch_size,
-        init_method=init_method,
-        save_dir=save_dir,
-    )
+    time_stemp = time.strftime("%m%d_%H%M%S", time.localtime())
+    btz = 16
+    for e,lr in [(1000,0.01),(200,0.01),(100,0.1),(50,1)]:
+        for inmethod in ["random","xavier","he"]:
+            print("#"*50,f"\ne={e},lr={lr},btz={btz},inmethod={inmethod}")
+            nn = main(time_stemp=time_stemp, e=e, lr=lr, btz=btz, inmethod=inmethod)
