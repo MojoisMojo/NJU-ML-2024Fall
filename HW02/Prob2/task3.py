@@ -5,7 +5,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from scipy.stats import ttest_ind
-from params import RAND_SEED, TEST_SIZE
+from params import RAND_SEED
 import os
 from data_loader import dataset_names, get_data
 from DTmodel import PrePrunDTModel, PostPrunDTModel, CRITERION
@@ -73,7 +73,7 @@ def main():
 
 
 if __name__ == "__main__":
-    dname = "iris"
+    dname = "full_bank"
     (
         X_train,
         X_test,
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     ) = get_data(dname)
     task3("output", X_train, X_test, y_train, y_test, dname=dname)
     """
-    # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED
+    # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED 2 Features
     未剪枝的决策树准确率: 0.8788888888888889
     预剪枝：
     Best params: {'max_depth': 8, 'max_leaf_nodes': 24, 'min_samples_leaf': 2, 'min_samples_split': 2}, Best score: 0.9061904761904762
@@ -92,9 +92,8 @@ if __name__ == "__main__":
     Best params: {'ccp_alpha': 0.0030278881665889573}, Best score: 0.9047619047619048
     后剪枝的决策树准确率: 0.8933333333333333
     未剪枝 vs 后剪枝 p值: 0.01231782821614784
-    """
-    """
-    # adult_income
+    
+    # adult_income 40k Instances
     未剪枝的决策树准确率: 0.811068116209078
     预剪枝：
     Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.855010716612513
@@ -104,4 +103,82 @@ if __name__ == "__main__":
     Best params: {'ccp_alpha': 0.00013663364519085}, Best score: 0.8599861513035167
     后剪枝的决策树准确率: 0.862600577360113
     未剪枝 vs 后剪枝 p值: 6.655682551121489e-23
+    
+    # wwine 1k Instances 12 Features
+    未剪枝的决策树准确率: 0.5877551020408164
+    预剪枝：
+    Warning: The least populated class in y has only 4 members, which is less than n_splits=5.
+    预剪枝的决策树准确率: 0.507482993197279
+    未剪枝 vs 预剪枝 p值: 0.43730245860396344
+    后剪枝：
+    Warning: The least populated class in y has only 4 members, which is less than n_splits=5.
+    Best params: {'ccp_alpha': 0.000352219197026665}, Best score: 0.5493009299653125
+    后剪枝的决策树准确率: 0.5884353741496599
+    未剪枝 vs 后剪枝 p值: 0.0888464102898602
+    
+    #rwine 3k Instances 12 Features
+    未剪枝的决策树准确率: 0.6104166666666667
+    预剪枝：
+    Best params: {'max_depth': 4, 'max_leaf_nodes': 16, 'min_samples_leaf': 1, 'min_samples_split': 4}, Best score: 0.5701513452914798
+    预剪枝的决策树准确率: 0.5708333333333333
+    未剪枝 vs 预剪枝 p值: 0.40020196521729423
+    后剪枝：
+    Best params: {'ccp_alpha': 0.0023641238118449898}, Best score: 0.5880124919923125
+    后剪枝的决策树准确率: 0.5833333333333334
+    未剪枝 vs 后剪枝 p值: 0.9323104234911845
+    
+    # allwine 4.9K Instances 12 Features
+    未剪枝的决策树准确率: 0.5902564102564103
+    预剪枝：
+    Warning: The least populated class in y has only 4 members, which is less than n_splits=5.
+    Best params: {'max_depth': 2, 'max_leaf_nodes': 10, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.5328845851618129
+    预剪枝的决策树准确率: 0.5056410256410256
+    未剪枝 vs 预剪枝 p值: 5.281555486312566e-10
+    后剪枝：
+    Warning: The least populated class in y has only 4 members, which is less than n_splits=5.
+    Best params: {'ccp_alpha': 0.007908052002760235}, Best score: 0.5328845851618129
+    后剪枝的决策树准确率: 0.5056410256410256
+    未剪枝 vs 后剪枝 p值: 5.281555486312566e-10
+    
+    # car 1.73K Instances 6 Features
+    未剪枝的决策树准确率: 0.9633911368015414
+    预剪枝：
+    Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.9305133568807655
+    预剪枝的决策树准确率: 0.9441233140655106
+    未剪枝 vs 预剪枝 p值: 0.579458261256573
+    后剪枝：
+    Best params: {'ccp_alpha': 0.0}, Best score: 0.9561709132059943
+    后剪枝的决策树准确率: 0.9633911368015414
+    未剪枝 vs 后剪枝 p值: 1.0
+    
+    # cancer 569 Instances 30 Features
+    0.9271835443037976
+    预剪枝的决策树准确率: 0.9005847953216374
+    未剪枝 vs 预剪枝 p值: 0.8175564519377121
+    后剪枝：
+    Best params: {'ccp_alpha': 0.004745951982132888}, Best score: 0.9246518987341773
+    后剪枝的决策树准确率: 0.8947368421052632
+    未剪枝 vs 后剪枝 p值: 0.9083907372539946
+    
+    # bank 4k Instances 17 Features
+    未剪枝的决策树准确率: 0.8725128960943257
+    预剪枝：
+    Best params: {'max_depth': 4, 'max_leaf_nodes': 12, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.8975948367228588
+    预剪枝的决策树准确率: 0.8909358879882093
+    未剪枝 vs 预剪枝 p值: 5.357042286640344e-08
+    后剪枝：
+    Best params: {'ccp_alpha': 0.0015919920787177428}, Best score: 0.8956976023356729
+    后剪枝的决策树准确率: 0.8850405305821666
+    未剪枝 vs 后剪枝 p值: 0.061646331732154475
+    
+    # full_bank 45k Instances 17 Features
+    未剪枝的决策树准确率: 0.8759952816278384
+    预剪枝：
+    Best params: {'max_depth': 12, 'max_leaf_nodes': 22, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.9031822072323369
+    预剪枝的决策树准确率: 0.9006192863462106
+    未剪枝 vs 预剪枝 p值: 5.57136635338016e-19
+    后剪枝：
+    Best params: {'ccp_alpha': 0.00015407684613385868}, Best score: 0.9034665624297193
+    后剪枝的决策树准确率: 0.901061633736361
+    未剪枝 vs 后剪枝 p值: 2.1258511279610506e-09
     """

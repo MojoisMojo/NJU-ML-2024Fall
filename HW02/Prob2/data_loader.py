@@ -3,9 +3,35 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from params import RAND_SEED, TEST_SIZE
 import pandas as pd
+import numpy as np
 
 
-dataset_names = ["iris", "cancer", "digits", "car", "moon", "income"]
+def myHotEncoder(X):
+    assert isinstance(X, pd.DataFrame)
+    categorical_features = X.select_dtypes(include=["object"]).columns
+    numerical_features = X.select_dtypes(exclude=["object"]).columns
+
+    # 对类别型特征进行独热编码
+    encoder = OneHotEncoder()
+    X_encoded = encoder.fit_transform(X[categorical_features])
+    X_numeric = X[numerical_features].values
+    X_prepared = np.hstack((X_numeric, X_encoded.toarray()))
+    return X_prepared
+
+
+dataset_names = [
+    "iris",
+    "cancer",
+    "digits",
+    # "moon",
+    "income",
+    "wwine",
+    "rwine",
+    "allwine",
+    "car",
+    "bank",
+    "full_bank",
+]
 
 
 def get_data(dataset_name):
@@ -13,9 +39,14 @@ def get_data(dataset_name):
         get_iris_data,
         get_breast_cancer_data,
         get_digits_data,
-        get_car_eval_data,
-        get_moon_data,
+        # get_moon_data,
         get_adult_income_data,
+        get_white_wine_data,
+        get_red_wine_data,
+        get_all_wine_data,
+        get_car_eval_data,
+        get_bank_data,
+        get_full_bank_data,
     ]
     table = dict(zip(dataset_names, dataset_getters))
     if dataset_name not in table:
@@ -60,7 +91,41 @@ def get_moon_data():
 
 
 def get_car_eval_data():
-    pass
+    """
+    | class values (不平衡的数据集)
+
+    unacc, acc, good, vgood
+
+    | attributes
+
+    buying:   vhigh, high, med, low.
+    maint:    vhigh, high, med, low.
+    doors:    2, 3, 4, 5more.
+    persons:  2, 4, more.
+    lug_boot: small, med, big.
+    safety:   low, med, high."""
+    data = pd.read_csv("../data/car_evaluation/car.data", header=None)
+    columns = ["buying", "maint", "doors", "persons", "lug_boot", "safety", "class"]
+    data.columns = columns
+    ytable = {"unacc": 0, "acc": 1, "good": 2, "vgood": 3}
+    # 分离特征和标签
+    X = data.drop("class", axis=1)
+    y = data["class"]
+    y = y.apply(lambda s: ytable[s])
+    # 识别类别型特征和数值型特征
+    categorical_features = X.select_dtypes(include=["object"]).columns
+    numerical_features = X.select_dtypes(exclude=["object"]).columns
+
+    # 对类别型特征进行独热编码
+    encoder = OneHotEncoder()
+    X_encoded = encoder.fit_transform(X[categorical_features])
+    X_numeric = X[numerical_features].values
+    X_prepared = np.hstack((X_numeric, X_encoded.toarray()))
+    # 将数据分回训练集和测试集
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_prepared, y, test_size=TEST_SIZE, random_state=RAND_SEED
+    )
+    return X_train, X_test, y_train, y_test
 
 
 def get_adult_income_data():
@@ -96,19 +161,7 @@ def get_adult_income_data():
     X = data.drop("income", axis=1)
     y = data["income"]
     y = y.apply(lambda s: 1 if (s == ">50K" or s == ">50K.") else 0)
-    # 识别类别型特征和数值型特征
-    categorical_features = X.select_dtypes(include=["object"]).columns
-    numerical_features = X.select_dtypes(exclude=["object"]).columns
-
-    # 对类别型特征进行独热编码
-    encoder = OneHotEncoder()
-    X_encoded = encoder.fit_transform(X[categorical_features])
-
-    # 将数值型特征和编码后的类别型特征合并
-    import numpy as np
-
-    X_numeric = X[numerical_features].values
-    X_prepared = np.hstack((X_numeric, X_encoded.toarray()))
+    X_prepared = myHotEncoder(X)
 
     # 将数据分回训练集和测试集
     X_train = X_prepared[: len(data_train)]
@@ -117,3 +170,45 @@ def get_adult_income_data():
     y_test = y[len(data_train) :].values
 
     return X_train, X_test, y_train, y_test
+
+
+def get_white_wine_data():
+    data = pd.read_csv("../data/wine_q/winequality-white.csv", sep=";")
+    X = data.drop("quality", axis=1).values
+    y = data["quality"].values
+    return train_test_split(X, y, test_size=TEST_SIZE, random_state=RAND_SEED)
+
+
+def get_red_wine_data():
+    data = pd.read_csv("../data/wine_q/winequality-red.csv", sep=";")
+    X = data.drop("quality", axis=1).values
+    y = data["quality"].values
+    return train_test_split(X, y, test_size=TEST_SIZE, random_state=RAND_SEED)
+
+
+def get_all_wine_data():
+    X_white_train, X_white_test, y_white_train, y_white_test = get_white_wine_data()
+    X_red_train, X_red_test, y_red_train, y_red_test = get_red_wine_data()
+    X_train = np.vstack((X_white_train, X_red_train))
+    X_test = np.vstack((X_white_test, X_red_test))
+    y_train = np.hstack((y_white_train, y_red_train))
+    y_test = np.hstack((y_white_test, y_red_test))
+    return X_train, X_test, y_train, y_test
+
+
+def get_bank_data():
+    data = pd.read_csv("../data/bank_mark/bank/bank.csv", sep=";")
+    X = data.drop("y", axis=1)
+    y = data["y"]
+    y = y.apply(lambda s: 1 if s == "yes" else 0).values
+    X_prepared = myHotEncoder(X)
+    return train_test_split(X_prepared, y, test_size=TEST_SIZE, random_state=RAND_SEED)
+
+
+def get_full_bank_data():
+    data = pd.read_csv("../data/bank_mark/bank/bank-full.csv", sep=";")
+    X = data.drop("y", axis=1)
+    y = data["y"]
+    y = y.apply(lambda s: 1 if s == "yes" else 0).values
+    X_prepared = myHotEncoder(X)
+    return train_test_split(X_prepared, y, test_size=TEST_SIZE, random_state=RAND_SEED)
