@@ -45,3 +45,10 @@ class PostPrunDTModel:
         self.model = gcv.best_estimator_
         print(f"Best params: {gcv.best_params_}, Best score: {gcv.best_score_}")
         return self.model
+
+"""
+未剪枝的决策树准确率: 0.811068116209078
+Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.855010716612513
+预剪枝的决策树准确率: 0.860573674835698
+未剪枝 vs 预剪枝 p值: 1.2692101690951682e-78
+"""
