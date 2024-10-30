@@ -14,6 +14,7 @@ task3_output = None
 
 
 def task3(output_path, X_train, X_test, y_train, y_test, dname=None):
+    global task3_output
     task3_output = f"{output_path}/task3"
     if dname:
         task3_output = f"{task3_output}/{dname}"
@@ -73,8 +74,9 @@ def main():
 
 
 if __name__ == "__main__":
-    # dataset_names 内的名字都行
-    dname = "full_bank"
+    # main()
+    # # dataset_names 内的名字都行
+    dname = "bank"
     (
         X_train,
         X_test,

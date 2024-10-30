@@ -1,21 +1,42 @@
-if __name__ == "__main__":
-    from sklearn import datasets
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.model_selection import train_test_split
-    from sklearn.datasets import load_iris
-    from sklearn.metrics import r2_score
-
-    DTC = DecisionTreeClassifier(random_state=14)
-    data = load_iris()
-    X, y = data.data, data.target
-    train_features, test_features, train_targets, test_targets = train_test_split(
-        X, y, train_size=0.7, shuffle=False, random_state=14
+def get_adult_income_data():
+    # 读取训练和测试数据
+    data_train = pd.read_csv(
+        "../data/adult/adult.data", header=None, skipinitialspace=True
     )
-    DTC.fit(train_features, train_targets)
-    predict_targets = DTC.predict(test_features)
-    right = 0
-    all_len = test_targets.shape[0]
-    for i in range(all_len):
-        if predict_targets[i] == test_targets[i]:
-            right += 1
-    print("正确率为:", right / all_len)
+    data_test = pd.read_csv(
+        "../data/adult/adult.test", header=None, skiprows=1, skipinitialspace=True
+    )
+    data = pd.concat([data_train, data_test], ignore_index=True)
+
+    columns = [
+        "age",
+        "workclass",
+        "fnlwgt",
+        "education",
+        "education-num",
+        "marital-status",
+        "occupation",
+        "relationship",
+        "race",
+        "sex",
+        "capital-gain",
+        "capital-loss",
+        "hours-per-week",
+        "native-country",
+        "income",
+    ]
+    data.columns = columns
+
+    # 分离特征和标签
+    X = data.drop("income", axis=1)
+    y = data["income"]
+    y = y.apply(lambda s: 1 if (s == ">50K" or s == ">50K.") else 0)
+    X_prepared = myHotEncoder(X)
+
+    # 将数据分回训练集和测试集
+    X_train = X_prepared[: len(data_train)]
+    X_test = X_prepared[len(data_train) :]
+    y_train = y[: len(data_train)].values
+    y_test = y[len(data_train) :].values
+
+    return X_train, X_test, y_train, y_test
