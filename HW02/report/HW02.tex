@@ -327,7 +327,7 @@ def over_sampling(self):
 \subsection*{代码 与 数据集的选择}
 \begin{itemize}
     \item \textcolor{red}{代码见压缩包code中的Prob2, 详细说明见Prob2中的README文件}; 
-    \item 详细输出见Prob2中的out文件夹。
+    \item \textcolor{red}{数据集加载见Prob2中的dataloader.py文件，详细输出见Prob2中的out文件夹}。
 \end{itemize}
 
 \subsection*{Task1 请简要总结决策树和多层感知机的工作原理及其对应的缓解过拟合的手段（5 points）} 
@@ -367,11 +367,113 @@ def over_sampling(self):
     \item \textbf{数据增强 (Data Augmentation)}：通过对训练数据进行随机变换，增加数据的多样性，从而提升模型的泛化性能。
 \end{itemize}
 
-2.请使用scikit-learn 实现决策树模型, 并扰动决策树的最大深度$max\_ depth$, 一般来说, $max\_ depth$的值越大, 决策树越复杂, 越容易过拟合, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）；
+\subsection*{Task2 请使用scikit-learn 实现决策树模型, 并扰动决策树的最大深度$max\_ depth$。一般来说, $max\_ depth$的值越大, 决策树越复杂, 越容易过拟合, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）；}
 
-3.对决策树算法的未剪枝、预剪枝和后剪枝进行实验比较，并进行适当的统计显著性检验（5 points）；
 
-4.请使用PyTorch 或scikit-learn 实现一个简单的多层感知机, 并通过层数、宽度或者优化轮数控制模型复杂度, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）。
+\subsection*{2.1 实验过程和结果}
+
+我们选取了[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 18, 22, 26, 30]作为$max\_ depth$的值，并发现在$max\_ depth$较大的时候，模型在不少数据集上出现了过拟合现象，全部图像见Prob2/out/task2文件夹中。我们选取一部分代表性的图像如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/full_bank/AccuracyVsMaxDepth_30.png}
+        \caption{bank-full dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on bank_full dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/income/AccuracyVsMaxDepth_30.png}
+        \caption{income dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on income dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/moon/AccuracyVsMaxDepth_30.png}
+        \caption{moon dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on moon dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/allwine/AccuracyVsMaxDepth_30.png}
+        \caption{wine-quality dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on wine_quality dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/digits/AccuracyVsMaxDepth_30.png}
+        \caption{digits dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on digits dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/cancer/AccuracyVsMaxDepth_30.png}
+        \caption{breast cancer dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on breast cancer dataset}
+    \end{minipage}
+\end{figure}
+
+\subsection*{2.2 解释}
+
+前三张图片较好的观察到了过拟合现象。而后三张图出现了一些奇怪的现象。个人猜测是图18可能是由于数据集的划分不好（因为我在之后跑的时候发现训练集中的某些特征很少无法5折交叉验证）；图19可能是digits数据集分布比较适合决策树或者是可能还未达到过拟合显示的最大深度（但是由于训练集上的正确率已经稳定达到1.0了所以第二种可能不大）；图20的出现一定程度上说明预剪枝的“贪心”有时候并不好。
+
+\subsection*{Task 3 对决策树算法的未剪枝、预剪枝和后剪枝进行实验比较，并进行适当的统计显著性检验（5 points）} 
+
+\subsection*{3.1 代码}
+
+预剪枝和后剪枝的代码见Prob2/DTmodel.py中，我们使用的K折交叉验证的方式进行实验比较，并选取综合得分最高的作为预剪枝/后剪枝的模型。
+
+\subsection*{3.2 输出结果}
+
+全部结果见Prob2/out/task3文件夹中，我们选取了一部分代表性的结果如下：
+
+\begin{lstlisting}[breaklines=true, language=Python, caption=输出结果]
+# adult_income 40k Instances
+未剪枝的决策树准确率: 0.811068116209078
+预剪枝：
+Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1,'min_samples_split': 2}, Best score: 0.855010716612513
+预剪枝的决策树准确率: 0.860573674835698
+未剪枝 vs 预剪枝 p值: 1.2692101690951682e-78
+后剪枝：
+Best params: {'ccp_alpha': 0.00013663364519085}, Best score: 0.8599861513035167
+后剪枝的决策树准确率: 0.862600577360113
+未剪枝 vs 后剪枝 p值: 6.655682551121489e-23
+
+# allwine 4.9K Instances 12 Features
+未剪枝的决策树准确率: 0.5902564102564103
+预剪枝：
+Best params: {'max_depth': 2, 'max_leaf_nodes': 10, 'min_samples_leaf': 1,'min_samples_split': 2}, Best score: 0.5328845851618129
+预剪枝的决策树准确率: 0.5056410256410256
+未剪枝 vs 预剪枝 p值: 5.281555486312566e-10
+后剪枝：
+Best params: {'ccp_alpha': 0.007908052002760235}, Best score: 05328845851618129
+后剪枝的决策树准确率: 0.5056410256410256
+未剪枝 vs 后剪枝 p值: 5.281555486312566e-10
+
+# cancer 569 Instances 30 Features
+0.9271835443037976
+预剪枝的决策树准确率: 0.9005847953216374
+未剪枝 vs 预剪枝 p值: 0.8175564519377121
+后剪枝：
+Best params: {'ccp_alpha': 0.004745951982132888}, Best score: 09246518987341773
+后剪枝的决策树准确率: 0.8947368421052632
+未剪枝 vs 后剪枝 p值: 0.9083907372539946
+\end{lstlisting}
+
+\subsection*{3.3 个人理解}
+
+在较大的数据集上，剪枝的效果较为明显，而在较小的数据集上，剪枝的效果可能不太明显。
+
+但是我们发现在wine-quality数据集上，预剪枝和后剪枝的结果并不理想，甚至比未剪枝的结果还要差，这可能是由于两种葡萄酒相互是对方的噪声、未经剪枝的决策树恰好具备足够的容量来拟合数据，而剪枝后容量不足，导致性能下降。
+
+此外，在小数据集上，预剪枝和后剪枝的效果可能并不明显。
+
+\subsection*{Task4 请使用PyTorch 或scikit-learn 实现一个简单的多层感知机, 并通过层数、宽度或者优化轮数控制模型复杂度, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）}
+
+\subsection*{注：数据集选择}
+
+数据集的加载见Prob2中的dataloader.py文件, 数据集本身见data文件夹。主要选择了 adult income, car evaluation, bank marking, dights,wine quality, breast cancer, moon 等数据集。
 
 \vspace{3em}
 

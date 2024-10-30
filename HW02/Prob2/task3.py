@@ -74,16 +74,16 @@ def main():
 
 
 if __name__ == "__main__":
-    # main()
+    main()
     # # dataset_names 内的名字都行
-    dname = "bank"
-    (
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-    ) = get_data(dname)
-    task3("output", X_train, X_test, y_train, y_test, dname=dname)
+    # dname = "bank"
+    # (
+    #     X_train,
+    #     X_test,
+    #     y_train,
+    #     y_test,
+    # ) = get_data(dname)
+    # task3("output", X_train, X_test, y_train, y_test, dname=dname)
     """
     # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED 2 Features
     未剪枝的决策树准确率: 0.8788888888888889

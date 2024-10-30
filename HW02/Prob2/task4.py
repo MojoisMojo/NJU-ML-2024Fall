@@ -299,9 +299,9 @@ def main():
 
 if __name__ == "__main__":
     # run_digits()
-    run_income()
+    # run_income()
     # run_wine()
     # run_car()
     # run_bank()
     # run_full_bank()
-    # main()
+    main()
