@@ -82,10 +82,24 @@ if __name__ == "__main__":
     """
     # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED
     未剪枝的决策树准确率: 0.8788888888888889
+    预剪枝：
     Best params: {'max_depth': 8, 'max_leaf_nodes': 24, 'min_samples_leaf': 2, 'min_samples_split': 2}, Best score: 0.9061904761904762
     预剪枝的决策树准确率: 0.8966666666666666
     未剪枝 vs 预剪枝 p值: 0.0730805800497277
+    后剪枝：
     Best params: {'ccp_alpha': 0.0030278881665889573}, Best score: 0.9047619047619048
     后剪枝的决策树准确率: 0.8933333333333333
     未剪枝 vs 后剪枝 p值: 0.01231782821614784
+    """
+    """
+    # adult_income
+    未剪枝的决策树准确率: 0.811068116209078
+    预剪枝：
+    Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1, 'min_samples_split': 2}, Best score: 0.855010716612513
+    预剪枝的决策树准确率: 0.860573674835698
+    未剪枝 vs 预剪枝 p值: 1.2692101690951682e-78
+    后剪枝：
+    Best params: {'ccp_alpha': 0.00013663364519085}, Best score: 0.8599861513035167
+    后剪枝的决策树准确率: 0.862600577360113
+    未剪枝 vs 后剪枝 p值: 6.655682551121489e-23
     """
