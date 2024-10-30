@@ -73,6 +73,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # dataset_names 内的名字都行
     dname = "full_bank"
     (
         X_train,
