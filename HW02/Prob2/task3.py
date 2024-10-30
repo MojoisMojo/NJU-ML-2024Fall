@@ -5,23 +5,19 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score
 from scipy.stats import ttest_ind
-from params import RAND_SEED, TEST_SIZE, CRITERION
+from params import RAND_SEED, TEST_SIZE
 import os
 from data_loader import dataset_names, get_data
-from DTmodel import PrePrunDTModel, PostPrunDTModel
+from DTmodel import PrePrunDTModel, PostPrunDTModel, CRITERION
 
 task3_output = None
 
 
-def task3(output_path, X, y, dname=None):
+def task3(output_path, X_train, X_test, y_train, y_test, dname=None):
     task3_output = f"{output_path}/task3"
     if dname:
         task3_output = f"{task3_output}/{dname}"
     os.makedirs(task3_output, exist_ok=True)
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=RAND_SEED
-    )
 
     # 未剪枝的决策树
     clf_unpruned = DecisionTreeClassifier(
@@ -65,16 +61,26 @@ def task3(output_path, X, y, dname=None):
 
 def main():
     for dname in dataset_names:
-        X, y = get_data(dname)
-        task3("output", X, y, dname=dname)
+        (
+            X_train,
+            X_test,
+            y_train,
+            y_test,
+        ) = get_data(dname)
+        task3("output", X_train, X_test, y_train, y_test, dname=dname)
 
 
 if __name__ == "__main__":
-    dname = "moon"
-    X, y = get_data(dname)
-    task3("output", X, y, dname=dname)
-    # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED
+    dname = "income" 
+    (
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+    ) = get_data(dname)
+    task3("output", X_train, X_test, y_train, y_test, dname=dname)
     """
+    # moon, samples = 3000, noise = 0.31, random_state = RAND_SEED
     未剪枝的决策树准确率: 0.8788888888888889
     Best params: {'max_depth': 8, 'max_leaf_nodes': 24, 'min_samples_leaf': 2, 'min_samples_split': 2}, Best score: 0.9061904761904762
     预剪枝的决策树准确率: 0.8966666666666666

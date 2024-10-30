@@ -27,18 +27,13 @@ def print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies):
     plt.savefig(f"{task2_output}/AccuracyVsMaxDepth_{MAX_DEPTH}.png")
 
 
-def task2(output_path, X, y, dname=None):
+def task2(output_path, X_train, X_test, y_train, y_test, dname=None):
     global task2_output
     task2_output = f"{output_path}/task2"
     if dname:
         task2_output = f"{task2_output}/{dname}"
 
     os.makedirs(task2_output, exist_ok=True)
-
-    # 划分训练集和测试集
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=TEST_SIZE, random_state=RAND_SEED
-    )
 
     # 定义不同的 max_depth 值
     max_depths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 18, 22, 26, 30]
@@ -73,11 +68,22 @@ def task2(output_path, X, y, dname=None):
 
 def main():
     for dataset_name in dataset_names:
-        X, y = get_data(dataset_name)
-        task2("output", X, y, dname=dataset_name)
+        (
+            X_train,
+            X_test,
+            y_train,
+            y_test,
+        ) = get_data(dataset_name)
+
+        task2("output", X_train, X_test, y_train, y_test, dname=dataset_name)
 
 
 if __name__ == "__main__":
-    dataset_name = dataset_names[2]
-    X, y = get_data(dataset_name)
-    task2(f"output", X, y, dname=dataset_name)
+    dataset_name = "digits"
+    (
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+    ) = get_data(dataset_name)
+    task2(f"output", X_train, X_test, y_train, y_test, dname=dataset_name)

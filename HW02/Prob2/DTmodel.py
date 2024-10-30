@@ -1,10 +1,10 @@
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
-from params import RAND_SEED, CRITERION
+from params import RAND_SEED
 import logging
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 
+CRITERION = "gini"  # gini, entropy, log_loss
 
 class PrePrunDTModel:
     def __init__(self, criterion=CRITERION):
@@ -36,9 +36,9 @@ class PostPrunDTModel:
         clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
         clf.fit(X_train, y_train)
         path = clf.cost_complexity_pruning_path(X_train, y_train)
-        ccp_alphas = path.ccp_alphas
+        ccp_alphas = path.ccp_alphas # 有效的 alpha 值 （可容忍的不纯度）
         params = {
-            "ccp_alpha": ccp_alphas
+            "ccp_alpha": ccp_alphas 
         }
         gcv = GridSearchCV(estimator=clf, param_grid=params) # 默认 使用 5 折 交叉验证 (cv=5)
         gcv.fit(X_train, y_train)
