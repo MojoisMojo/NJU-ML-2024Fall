@@ -36,7 +36,7 @@ class PostPrunDTModel:
         clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
         clf.fit(X_train, y_train)
         path = clf.cost_complexity_pruning_path(X_train, y_train)
-        ccp_alphas = path.ccp_alphas # 有效的 alpha 值 （可容忍的不纯度）
+        ccp_alphas = path.ccp_alphas[:-1] # 有效的 alpha 值 （可容忍的不纯度）
         params = {
             "ccp_alpha": ccp_alphas 
         }

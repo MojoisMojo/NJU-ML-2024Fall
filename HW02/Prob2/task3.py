@@ -55,7 +55,9 @@ def task3(output_path, X_train, X_test, y_train, y_test, dname=None):
         print(f"后剪枝的决策树准确率: {accuracy_postpruned}")
         print(f"未剪枝 vs 后剪枝 p值: {p_value_unpruned_postpruned}")
 
+    print("预剪枝：")
     prepruned_task()
+    print("后剪枝：")
     postpruned_task()
 
 
@@ -71,7 +73,7 @@ def main():
 
 
 if __name__ == "__main__":
-    dname = "income" 
+    dname = "iris"
     (
         X_train,
         X_test,
