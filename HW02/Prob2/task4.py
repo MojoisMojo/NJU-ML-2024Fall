@@ -48,9 +48,9 @@ def paint_and_save(epochs, hidden_sizes_list, train_accuracies, test_accuracies)
         la = ",".join(map(str, hidden_sizes))
         plt.plot(epochs, test_accuracies[i], label=f"Layers:{la}-test", marker="o")
         plt.plot(epochs, train_accuracies[i], label=f"Layers:{la}-train", marker="x")
-    plt.xlabel("Number of Layers")
+    plt.xlabel("Number of Epochs")
     plt.ylabel("Accuracy")
-    plt.title("Accuracy vs. Number of Layers")
+    plt.title("Accuracy vs. Epochs, widths and layers")
     plt.legend()
     plt.grid(True)
     timestamp = datetime.now().strftime("%m%d_%H%M%S")
@@ -198,6 +198,16 @@ def run_income():
     ) = get_data("income", encoder="label")
     task4(
         "output",
+        400,
+        [[8], [8, 4], [19, 13], [24, 8]],
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        "income",
+    )
+    task4(
+        "output",
         800,
         [[8], [8, 4], [19, 13], [24, 8]],
         X_train,
@@ -259,7 +269,17 @@ def run_bank():
     task4(
         "output",
         400,
-        [[8], [8, 4], [12, 6], [12, 6, 3], [32, 16, 8]],
+        [[16], [16, 8], [8], ],
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        "bank",
+    )
+    task4(
+        "output",
+        800,
+        [[8, 4], [16, 8], [21, 14], [9, 5, 3]],
         X_train,
         X_test,
         y_train,
@@ -278,8 +298,18 @@ def run_full_bank():
     ) = get_data("full_bank", encoder="label")
     task4(
         "output",
-        250,
-        [[8], [8, 4], [12, 6, 3], [32, 16, 8]],
+        400,
+        [[16], [16, 8], [8], [8, 4]],
+        X_train,
+        X_test,
+        y_train,
+        y_test,
+        "full_bank",
+    )
+    task4(
+        "output",
+        800,
+        [[16, 8], [21, 14], [9, 5, 3]],
         X_train,
         X_test,
         y_train,
