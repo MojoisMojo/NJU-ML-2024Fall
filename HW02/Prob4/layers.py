@@ -1,11 +1,5 @@
 import numpy as np
 
-"""
-实现参考
-    知乎:  https://zhuanlan.zhihu.com/p/377634925
-    CS188: Introduction to Artificial Intelligence
-"""
-
 
 def init_param(method, input_size, output_size, shape):
     if method == "random":
@@ -29,6 +23,13 @@ def xavier_init(input_size, output_size, shape):
 
 def he_init(input_size, shape):
     return np.random.normal(0, np.sqrt(2 / input_size), shape)
+
+
+"""
+实现参考
+    知乎:  https://zhuanlan.zhihu.com/p/377634925
+    CS188: Introduction to Artificial Intelligence
+"""
 
 
 class FullyConnectedLayer(object):
@@ -57,7 +58,7 @@ class FullyConnectedLayer(object):
         return self.output
 
     def backward(self, top_diff):
-        # input x w + b = output  
+        # input x w + b = output
         # dtdiff/dw = input
         self.d_weight = np.dot(self.input.T, top_diff)
         # dtdiff/db = 1
