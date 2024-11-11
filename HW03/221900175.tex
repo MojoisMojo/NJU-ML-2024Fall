@@ -31,7 +31,7 @@
 
 \begin{document}
 
-\textbf{\color{blue} \Large 姓名：张三 \ \ \ 学号：123456789 \ \ \ \today}
+\textbf{\color{blue} \Large 姓名：毛九弢 \ \ \ 学号：221900175 \ \ \ \today}
 
 \section*{一. (30 分) 软间隔 SVM}
 教材 6.4 节介绍了软间隔概念，用来解决线性不可分情况下的 SVM 问题，同时也可缓解 SVM 训练的过拟合问题。定义松弛变量 \( \xi = \{\xi_i\}_{i=1}^m \)，其中 \( \xi_i > 0 \) 表示样本 \( x_i \) 对应的间隔约束不满足的程度。软间隔 SVM 问题可以表示为：
@@ -215,6 +215,42 @@
 
 \textbf{\large 解:}
 
+\begin{enumerate}
+    \item \textbf{使用\textbf{拉普拉斯修正}（\(\alpha = 1\)）计算以下条件概率} ：
+        \begin{itemize}
+            \item \( 
+                P(\text{good} | \text{正面评论}) = 
+                \frac{}{}
+            \)
+            \item \( P(\text{bad} | \text{正面评论}) \)
+            \item \( P(\text{quality} | \text{正面评论}) \)
+            \item \( P(\text{price} | \text{正面评论}) \)
+            \item \( P(\text{recommend} | \text{正面评论}) \)
+        \end{itemize}
+        \begin{itemize}
+            \item \( 
+                P(\text{good} | \text{负面评论}) = 
+                \frac{}{}
+            \)
+            \item \( P(\text{bad} | \text{负面评论}) \)
+            \item \( P(\text{quality} | \text{负面评论}) \)
+            \item \( P(\text{price} | \text{负面评论}) \)
+            \item \( P(\text{recommend} | \text{负面评论}) \)
+        \end{itemize}
+
+    \item \textbf{（12分）} 假设我们有一条新评论 \( X = \{\text{good}, \text{quality}, \text{price}\} \)，请使用朴素贝叶斯分类器计算该评论属于\textbf{正面评论}和\textbf{负面评论}的后验概率 \( P(\text{正面评论} | X) \) 和 \( P(\text{负面评论} | X) \)，并根据计算结果确定该评论的情感类别。
+\end{enumerate}
+
+\textbf{注}：
+\begin{itemize}
+    \item 本题的答案请以分式或者小数点后两位的形式给出，比如P=0.67.
+    \item 在计算条件概率时，请注意考虑拉普拉斯修正后的分母变化。
+    \item 最终的后验概率可以使用贝叶斯公式结合条件独立性假设：
+    \[
+    P(y|X) = \frac{P(y) \cdot P(X|y)}{P(X)}
+    \]
+    因为 \( P(X) \) 是相同的常数项，比较 \( P(y) \cdot P(X|y) \) 即可。
+\end{itemize}
 
 \vspace{3em}
 
