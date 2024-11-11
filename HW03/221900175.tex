@@ -367,5 +367,63 @@ X = \{\text{正面, 正面, 反面, 正面, 反面, 反面}\}
 
 \textbf{\large 解:}
 
+根据结果，估计先验：
+\[P(\text{正面}) = \frac{3}{6} = 0.5\]
+\[P(\text{反面}) = \frac{3}{6} = 0.5\]
 
+\begin{enumerate}
+    \item \textbf{E步}（15分）：请计算以下内容：在第 1 次到第 6 次抛掷中，1. 每个结果（正面或反面）由硬币 A 生成的概率 \( P(A | x_i) \)。2. 每个结果由硬币 B 生成的概率 \( P(B | x_i) \)。
+
+    \[
+    P(A|\text{正面}) = \frac{P(\text{正面}|A) \cdot P(A)}{P(\text{正面})}
+    =0.6 \cdot 0.5 / 0.5 = 0.6
+    \]
+    \[
+    P(A|\text{反面}) = \frac{P(\text{反面}|A) \cdot P(A)}{P(\text{反面})}
+    =0.4 \cdot 0.5 / 0.5 = 0.4
+    \]
+    \[
+    P(B|\text{正面}) = \frac{P(\text{正面}|B) \cdot P(B)}{P(\text{正面})}
+    =0.5 \cdot 0.5 / 0.5 = 0.5
+    \]
+    \[
+    P(B|\text{反面}) = \frac{P(\text{反面}|B) \cdot P(B)}{P(\text{反面})}
+    =0.5 \cdot 0.5 / 0.5 = 0.5
+    \]
+
+    {\color{blue}归一化得：}
+
+    \[
+    P'(A|\text{正面}) = \frac{P(A|\text{正面})}{P(A|\text{正面})+P(B|\text{正面})}
+    =0.6 / (0.6 + 0.5) \approx 0.55
+    \]
+    \[
+    P'(B|\text{正面}) = \frac{P(B|\text{正面})}{P(A|\text{正面})+P(B|\text{正面})}
+    =0.5 / (0.6 + 0.5) \approx 0.45
+    \]
+    \[
+    P'(A|\text{反面}) = \frac{P(A|\text{反面})}{P(A|\text{反面})+P(B|\text{反面})}
+    =0.4 / (0.4 + 0.5) \approx 0.44
+    \]
+    \[
+    P'(B|\text{反面}) = \frac{P(B|\text{反面})}{P(A|\text{反面})+P(B|\text{反面})}
+    =0.5 / (0.4 + 0.5) \approx 0.56
+    \]
+
+    \item \textbf{M步}（15分）：请计算以下内容：1. 硬币 A 的正面和反面期望出现次数，并据此更新硬币 A 的正面概率 \( \theta_A^{(1)} \)。2. 硬币 B 的正面和反面期望出现次数，并据此更新硬币 B 的正面概率 \( \theta_B^{(1)} \)。
+
+{\color{blue}我们使用 H 表示 正面，T表示反面}
+
+硬币 A 的正面和反面期望出现次数：
+\[\mathbb{E}(AH) = 3 \cdot 0.55 = 1.65 \]
+\[\mathbb{E}(AT) = 3 \cdot 0.44 = 1.32 \]
+更新：\[\theta_A^{(1)} = \frac{\mathbb{E}(AH)}{\mathbb{E}(AH) + \mathbb{E}(AT)} = 0.56 \]
+
+
+硬币 B 的正面和反面期望出现次数：
+\[\mathbb{E}(BH) = 3 \cdot 0.45 = 1.35 \]
+\[\mathbb{E}(BT) = 3 \cdot 0.56 = 1.68 \]
+更新：\[\theta_B^{(1)} = \frac{\mathbb{E}(BH)}{\mathbb{E}(BH) + \mathbf{E}(AT)} = 0.45 \]
+
+\end{enumerate}
 \end{document}
