@@ -171,6 +171,8 @@
 \section*{三. (20 分) 朴素贝叶斯分类器}
 一家电商公司希望通过用户评论的关键词来预测评论的情感（\textbf{正面} 或 \textbf{负面}）。假设已经收集了一小部分用户评论，并从中提取出以下五个关键词作为特征：\textbf{“good”}、\textbf{“bad”}、\textbf{“quality”}、\textbf{“price”} 和 \textbf{“recommend”}。每条评论可以被标记为“正面”或“负面”。
 
+{\color{blue}这里假设下方收集到的数据，每个评论仅有一个关键词}
+
 \begin{table}[h!]\small
     \centering
     \begin{tabular}{|c|c|c|c|c|c|}
@@ -216,41 +218,117 @@
 \textbf{\large 解:}
 
 \begin{enumerate}
-    \item \textbf{使用\textbf{拉普拉斯修正}（\(\alpha = 1\)）计算以下条件概率} ：
+    \item \textbf{（8分）} 基于上述数据，使用\textbf{拉普拉斯修正}（\(\alpha = 1\)）计算以下条件概率：
+    
+    \text{已知，正面评论和负面评论的总数分别为\(
+    50 + 5 + 45 + 20 + 60 = 180,
+    10 + 30 + 5 + 25 + 2 = 72
+    \)} \\
+    故而：
         \begin{itemize}
             \item \( 
-                P(\text{good} | \text{正面评论}) = 
-                \frac{}{}
+                P(\text{good} | \text{正面评论}) 
+                = \frac{50 + 1}{180 + 2} \approx 0.28
             \)
-            \item \( P(\text{bad} | \text{正面评论}) \)
-            \item \( P(\text{quality} | \text{正面评论}) \)
-            \item \( P(\text{price} | \text{正面评论}) \)
-            \item \( P(\text{recommend} | \text{正面评论}) \)
+            \item \( P(\text{bad} | \text{正面评论}) 
+                = \frac{5 + 1}{180 + 2} \approx 0.03
+            \)
+            \item \( P(\text{quality} | \text{正面评论}) 
+                = \frac{45 + 1}{180 + 2} \approx 0.25
+            \)
+            \item \( P(\text{price} | \text{正面评论}) 
+                = \frac{20 + 1}{180 + 2} \approx 0.12
+            \)
+            \item \( P(\text{recommend} | \text{正面评论}) 
+                = \frac{60 + 1}{180 + 2} \approx 0.34
+            \)
         \end{itemize}
         \begin{itemize}
             \item \( 
                 P(\text{good} | \text{负面评论}) = 
-                \frac{}{}
+                =  \frac{10 + 1}{72 + 2} \approx 0.15
             \)
-            \item \( P(\text{bad} | \text{负面评论}) \)
-            \item \( P(\text{quality} | \text{负面评论}) \)
-            \item \( P(\text{price} | \text{负面评论}) \)
-            \item \( P(\text{recommend} | \text{负面评论}) \)
+            \item \( P(\text{bad} | \text{负面评论}) 
+                =  \frac{30 + 1}{72 + 2} \approx 0.42
+            \)
+            \item \( P(\text{quality} | \text{负面评论}) 
+                = \frac{5 + 1}{72 + 2} \approx 0.08
+            \)
+            \item \( P(\text{price} | \text{负面评论}) 
+                = \frac{25 + 1}{72 + 2} \approx 0.35
+            \)
+            \item \( P(\text{recommend} | \text{负面评论}) 
+                = \frac{2 + 1}{72 + 2} \approx 0.04
+            \)
         \end{itemize}
 
     \item \textbf{（12分）} 假设我们有一条新评论 \( X = \{\text{good}, \text{quality}, \text{price}\} \)，请使用朴素贝叶斯分类器计算该评论属于\textbf{正面评论}和\textbf{负面评论}的后验概率 \( P(\text{正面评论} | X) \) 和 \( P(\text{负面评论} | X) \)，并根据计算结果确定该评论的情感类别。
+
+    引入拉普拉斯修正后，类的先验概率为：
+    \[P(\text{good}) = \frac{50 + 10 + 1}{180 + 72 + 5}
+    \approx 0.24
+    \]
+    \[P(\text{bad}) = \frac{5 + 30 + 1}{180 + 72 + 5}
+    \approx 0.14
+    \]
+    \[P(\text{quality}) = \frac{45 + 5 + 1}{180 + 72 + 5}
+    \approx 0.20
+    \]
+    \[P(\text{price}) = \frac{20 + 25 + 1}{180 + 72 + 5}
+    \approx 0.18
+    \]
+    \[P(\text{recommend}) = \frac{60 + 2 + 1}{180 + 72 + 5}
+    \approx 0.25
+    \]
+故而， \( P(\text{正面评论} | X) \) 和 \( P(\text{负面评论} | X)\)为：
+
+    \begin{align*}
+    P(\text{正面评论} | X) 
+    & = \frac{P(\text{正面评论} \cdot P(X | \text{正面评论}))}{P(X)} 
+    \\
+    & = \frac
+        {
+            0.7 \cdot (\prod_{x\in{X}}{P(x|\text{正面评论})})
+        }
+        {
+            \prod_{x\in{X}}{P(x)}
+        }
+    \\ 
+    & = \frac
+        {
+            0.7 \cdot (0.28 \cdot 0.25 \cdot 0.12)
+        }
+        {
+            0.24 \cdot 0.20 \cdot 0.18
+        }
+    \\
+    & \approx 0.68
+    \end{align*}
+    \begin{align*}
+    P(\text{反面评论} | X) 
+    & = \frac{P(\text{反面评论} \cdot P(X | \text{反面评论}))}{P(X)} 
+    \\
+    & = \frac
+        {
+            0.3 \cdot (\prod_{x\in{X}}{P(x|\text{反面评论})})
+        }
+        {
+            \prod_{x\in{X}}{P(x)}
+        }
+    \\ 
+    & = \frac
+        {
+            0.3 \cdot (0.15 \cdot 0.08 \cdot 0.35)
+        }
+        {
+            0.24 \cdot 0.20 \cdot 0.18
+        }
+    \\
+    & \approx 0.15
+    \end{align*}
+{\color{blue}\textbf{最终，我们判断，该评论的情感类别为正面评论}}
 \end{enumerate}
 
-\textbf{注}：
-\begin{itemize}
-    \item 本题的答案请以分式或者小数点后两位的形式给出，比如P=0.67.
-    \item 在计算条件概率时，请注意考虑拉普拉斯修正后的分母变化。
-    \item 最终的后验概率可以使用贝叶斯公式结合条件独立性假设：
-    \[
-    P(y|X) = \frac{P(y) \cdot P(X|y)}{P(X)}
-    \]
-    因为 \( P(X) \) 是相同的常数项，比较 \( P(y) \cdot P(X|y) \) 即可。
-\end{itemize}
 
 \vspace{3em}
 
