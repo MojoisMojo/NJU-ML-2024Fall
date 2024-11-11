@@ -116,6 +116,55 @@
 \end{enumerate}
 
 \textbf{\large 解:}
+    \textbf{\color{red}{代码见 Prob2; 输出见 Prob2/Out}}
+\begin{enumerate}
+    \item \textbf{SVM模型训练过程的完整代码以及实验结果的截图} 结果：输出支持向量，并绘制分类边界
+
+    \textbf{支持向量：\([
+    [ 2, 3.5],
+    [1.5, 1.],
+    [ 3.,   3. ],
+    [ 9.,  10. ],
+    [ 7.,  7.5]]\)
+    }
+    \begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{HW03/Prob2/out/task1/decision_boundary_train.png}
+        \caption{分类边界线图}
+        \label{fig:decision_boundary_train}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{HW03/Prob2/out/task1/decision_boundary_trainProb.png}
+        \caption{概率等高线图}
+        \label{fig:decision_boundary_trainProb}
+    \end{minipage}
+    \hfill
+\end{figure}
+    
+    \item \textbf{通过网格搜索优化提高模型的泛化能力} 
+
+    我们通过网格搜索优化 SVM 的\textbf{惩罚参数} \(C\) 和\textbf{核系数} \( \gamma \) 。尝试 \( C \) 取值 \([0.1, 1, 10, 100]\) 和 \( \gamma \) 取值 \([0.1, 1, 10]\)，找出最佳参数组合\( C = 0.1 \)和 \( \gamma  = 0.1\)，输出了优化后训练准确率\(1.0000\)和支持向量索引\([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\)。
+    
+    \textbf{总结如下：}
+
+    惩罚参数 \(C\)
+    \begin{itemize} 
+        \item \(C\) 是 SVM 中的正则化参数，控制着训练模型对误分类的惩罚力度。
+        \item 较大的 \(C\) 值，对误分类的惩罚更大，模型会尽量减少训练错误；模型更复杂，可能会拟合训练数据中的噪声，导致过拟合，泛化能力下降。
+        \item 较小的 \(C\) 值，对误分类的容忍度更高，允许部分训练错误；模型更简化，可能欠拟合，但泛化能力可能提高。
+    \end{itemize}
+    核系数 \(\gamma\)
+    \begin{itemize} 
+        \item \(\gamma\) 控制 RBF（径向基函数）核函数的影响范围，决定单个训练样本对决策边界的影响。
+        \item 较大的 \(\gamma\) 值，单个样本的影响范围小，决策边界更灵活；模型复杂度增加，可能紧贴训练数据，容易过拟合。
+        \item 较小的 \(\gamma\) 值，单个样本的影响范围大，决策边界更平滑；模型复杂度降低，可能欠拟合。
+    \end{itemize}
+    \textbf{综合来看：}较小的 \(C\) 和 \(\gamma\) 值导致模型简单，决策边界平滑，泛化能力较好。在训练集上准确率高，但存在过拟合的可能性，应结合验证集或测试集评价模型性能。适当的参数选择使模型不过于复杂，避免过拟合，从而在未知数据上保持良好的性能。
+\end{enumerate}
 
 \vspace{3em}
 
