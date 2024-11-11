@@ -45,3 +45,4 @@ print_and_write(write_file, f"训练准确率：{train_accuracy:.4f}")
 n_support = best_model.n_support_
 print_and_write(write_file, f"每类的支持向量数量：{n_support}")
 print_and_write(write_file, f"总支持向量数量：{sum(n_support)}")
+print_and_write(write_file, f"支持向量索引：{best_model.support_}")
