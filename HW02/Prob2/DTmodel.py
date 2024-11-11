@@ -5,11 +5,16 @@ import numpy as np
 from sklearn.model_selection import GridSearchCV
 
 CRITERION = "gini"  # gini, entropy, log_loss
+CV = 5  # 交叉验证的折数 default=5
+
 
 class PrePrunDTModel:
-    def __init__(self, criterion=CRITERION):
+    def __init__(
+        self, criterion=CRITERION, cv=CV
+    ):  # 默认 使用 5 折 交叉验证 (cv=5) 如果不行的话 使用 cv=3
         self.model = None
         self.criterion = criterion
+        self.cv = cv
 
     def train(self, X_train, y_train):
         params = {
@@ -20,31 +25,34 @@ class PrePrunDTModel:
         }
 
         clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
-        gcv = GridSearchCV(estimator=clf, param_grid=params) # 默认 使用 5 折 交叉验证 (cv=5)
+        gcv = GridSearchCV(estimator=clf, param_grid=params, cv=self.cv)
         gcv.fit(X_train, y_train)
 
         self.model = gcv.best_estimator_
         print(f"Best params: {gcv.best_params_}, Best score: {gcv.best_score_}")
         return self.model
 
+
 class PostPrunDTModel:
-    def __init__(self, criterion=CRITERION):
+    def __init__(
+        self, criterion=CRITERION, cv=CV
+    ):  # 默认 使用 5 折 交叉验证 (cv=5) 如果不行的话 使用 cv=3
         self.model = None
         self.criterion = criterion
+        self.cv = cv
 
     def train(self, X_train, y_train):
         clf = DecisionTreeClassifier(random_state=RAND_SEED, criterion=self.criterion)
         clf.fit(X_train, y_train)
         path = clf.cost_complexity_pruning_path(X_train, y_train)
-        ccp_alphas = path.ccp_alphas[:-1] # 有效的 alpha 值 （可容忍的不纯度）
-        params = {
-            "ccp_alpha": ccp_alphas 
-        }
-        gcv = GridSearchCV(estimator=clf, param_grid=params) # 默认 使用 5 折 交叉验证 (cv=5)
+        ccp_alphas = path.ccp_alphas[:-1]  # 有效的 alpha 值 （可容忍的不纯度）
+        params = {"ccp_alpha": ccp_alphas}
+        gcv = GridSearchCV(estimator=clf, param_grid=params, cv=self.cv)
         gcv.fit(X_train, y_train)
         self.model = gcv.best_estimator_
         print(f"Best params: {gcv.best_params_}, Best score: {gcv.best_score_}")
         return self.model
+
 
 """
 未剪枝的决策树准确率: 0.811068116209078

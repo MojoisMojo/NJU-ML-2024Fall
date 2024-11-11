@@ -6,7 +6,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 from data_loader import dataset_names, get_data
 import os
-from params import RAND_SEED, TEST_SIZE, CRITERION
+from params import RAND_SEED
+from DTmodel import CRITERION
 
 MAX_DEPTH = 30
 
@@ -20,7 +21,7 @@ def print_accuracies_vs_depths(max_depths, train_accuracies, test_accuracies):
     plt.plot(max_depths, test_accuracies, label="Test Accuracy", marker="o")
     plt.xlabel("Max Depth")
     plt.ylabel("Accuracy")
-    plt.title(f"Decision Tree Accuracy vs. Max Depth {MAX_DEPTH}")
+    plt.title(f"Decision Tree Accuracy vs. Max Depth")
     plt.legend()
     plt.grid(True)
     # plt.show()
@@ -79,11 +80,12 @@ def main():
 
 
 if __name__ == "__main__":
-    dataset_name = "digits"
-    (
-        X_train,
-        X_test,
-        y_train,
-        y_test,
-    ) = get_data(dataset_name)
-    task2(f"output", X_train, X_test, y_train, y_test, dname=dataset_name)
+    main()
+    # dataset_name = "digits"
+    # (
+    #     X_train,
+    #     X_test,
+    #     y_train,
+    #     y_test,
+    # ) = get_data(dataset_name)
+    # task2(f"output", X_train, X_test, y_train, y_test, dname=dataset_name)

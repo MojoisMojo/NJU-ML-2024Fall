@@ -169,4 +169,11 @@ if __name__ == "__main__":
     )
     time_stemp = time.strftime("%m%d_%H%M%S", time.localtime())
     btz = 16
-    nn = main(time_stemp=time_stemp, e=1000, lr=0.01, btz=btz, inmethod="he")
+    for e,lr in [(100,0.1),(50,1)]:
+        for inmethod in ["random","xavier","he"]:
+            print("#"*50,f"\ne={e},lr={lr},btz={btz},inmethod={inmethod}")
+            nn = main(time_stemp=time_stemp, e=e, lr=lr, btz=btz, inmethod=inmethod)
+    # method = ["random", "xavier", "he"]
+    # for m in method:
+    #     print("#" * 50, f"\ne=500,lr=0.01,btz={btz},inmethod={m}")
+    #     nn = main(time_stemp=time_stemp, e=500, lr=0.01, btz=btz, inmethod=m)

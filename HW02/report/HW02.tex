@@ -16,7 +16,7 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 \usepackage{fancyhdr}
 \usepackage{hyperref}
 \usepackage{subcaption}
-
+\usepackage{diagbox}
 \pagestyle{fancy}
 
 % 设置页眉
@@ -327,7 +327,7 @@ def over_sampling(self):
 \subsection*{代码 与 数据集的选择}
 \begin{itemize}
     \item \textcolor{red}{代码见压缩包code中的Prob2, 详细说明见Prob2中的README文件}; 
-    \item 详细输出见Prob2中的out文件夹。
+    \item \textcolor{red}{数据集加载见Prob2中的dataloader.py文件，详细输出见Prob2中的out文件夹}。
 \end{itemize}
 
 \subsection*{Task1 请简要总结决策树和多层感知机的工作原理及其对应的缓解过拟合的手段（5 points）} 
@@ -367,11 +367,186 @@ def over_sampling(self):
     \item \textbf{数据增强 (Data Augmentation)}：通过对训练数据进行随机变换，增加数据的多样性，从而提升模型的泛化性能。
 \end{itemize}
 
-2.请使用scikit-learn 实现决策树模型, 并扰动决策树的最大深度$max\_ depth$, 一般来说, $max\_ depth$的值越大, 决策树越复杂, 越容易过拟合, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）；
+\subsection*{Task2 请使用scikit-learn 实现决策树模型, 并扰动决策树的最大深度$max\_ depth$。一般来说, $max\_ depth$的值越大, 决策树越复杂, 越容易过拟合, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）；}
 
-3.对决策树算法的未剪枝、预剪枝和后剪枝进行实验比较，并进行适当的统计显著性检验（5 points）；
 
-4.请使用PyTorch 或scikit-learn 实现一个简单的多层感知机, 并通过层数、宽度或者优化轮数控制模型复杂度, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）。
+\subsection*{2.1 实验过程和结果}
+
+我们选取了[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 18, 22, 26, 30]作为$max\_ depth$的值，并发现在$max\_ depth$较大的时候，模型在不少数据集上出现了过拟合现象，全部图像见Prob2/out/task2文件夹中。我们选取一部分代表性的图像如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/full_bank/AccuracyVsMaxDepth_30.png}
+        \caption{bank-full dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on bank_full dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/income/AccuracyVsMaxDepth_30.png}
+        \caption{income dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on income dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/moon/AccuracyVsMaxDepth_30.png}
+        \caption{moon dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on moon dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/allwine/AccuracyVsMaxDepth_30.png}
+        \caption{wine-quality dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on wine_quality dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/digits/AccuracyVsMaxDepth_30.png}
+        \caption{digits dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on digits dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task2/cancer/AccuracyVsMaxDepth_30.png}
+        \caption{breast cancer dataset}
+        \label{fig:AccuracyVsMaxDepth_30 on breast cancer dataset}
+    \end{minipage}
+\end{figure}
+
+\subsection*{2.2 解释}
+
+前三张图片较好的观察到了过拟合现象。而后三张图出现了一些奇怪的现象。个人猜测是图18可能是由于数据集的划分不好（因为我在之后跑的时候发现训练集中的某些特征很少无法5折交叉验证）；图19可能是digits数据集分布比较适合决策树或者是可能还未达到过拟合显示的最大深度（但是由于训练集上的正确率已经稳定达到1.0了所以第二种可能不大）；图20的出现一定程度上说明预剪枝的“贪心”有时候并不好。
+
+\subsection*{Task 3 对决策树算法的未剪枝、预剪枝和后剪枝进行实验比较，并进行适当的统计显著性检验（5 points）} 
+
+\subsection*{3.1 代码}
+
+预剪枝和后剪枝的代码见Prob2/DTmodel.py中，我们使用的K折交叉验证的方式进行实验比较，并选取综合得分最高的作为预剪枝/后剪枝的模型。
+
+\subsection*{3.2 输出结果}
+
+全部结果见Prob2/out/task3文件夹中，我们选取了一部分代表性的结果如下：
+
+\begin{lstlisting}[breaklines=true, language=Python, caption=输出结果]
+# adult_income 40k Instances
+未剪枝的决策树准确率: 0.811068116209078
+预剪枝：
+Best params: {'max_depth': 10, 'max_leaf_nodes': 28, 'min_samples_leaf': 1,'min_samples_split': 2}, Best score: 0.855010716612513
+预剪枝的决策树准确率: 0.860573674835698
+未剪枝 vs 预剪枝 p值: 1.2692101690951682e-78
+后剪枝：
+Best params: {'ccp_alpha': 0.00013663364519085}, Best score: 0.8599861513035167
+后剪枝的决策树准确率: 0.862600577360113
+未剪枝 vs 后剪枝 p值: 6.655682551121489e-23
+
+# allwine 4.9K Instances 12 Features
+未剪枝的决策树准确率: 0.5902564102564103
+预剪枝：
+Best params: {'max_depth': 2, 'max_leaf_nodes': 10, 'min_samples_leaf': 1,'min_samples_split': 2}, Best score: 0.5328845851618129
+预剪枝的决策树准确率: 0.5056410256410256
+未剪枝 vs 预剪枝 p值: 5.281555486312566e-10
+后剪枝：
+Best params: {'ccp_alpha': 0.007908052002760235}, Best score: 05328845851618129
+后剪枝的决策树准确率: 0.5056410256410256
+未剪枝 vs 后剪枝 p值: 5.281555486312566e-10
+
+# cancer 569 Instances 30 Features
+0.9271835443037976
+预剪枝的决策树准确率: 0.9005847953216374
+未剪枝 vs 预剪枝 p值: 0.8175564519377121
+后剪枝：
+Best params: {'ccp_alpha': 0.004745951982132888}, Best score: 09246518987341773
+后剪枝的决策树准确率: 0.8947368421052632
+未剪枝 vs 后剪枝 p值: 0.9083907372539946
+\end{lstlisting}
+
+\subsection*{3.3 个人理解}
+
+在较大的数据集上，剪枝的效果较为明显，而在较小的数据集上，剪枝的效果可能不太明显。
+
+但是我们发现在wine-quality数据集上，预剪枝和后剪枝的结果并不理想，甚至比未剪枝的结果还要差，这可能是由于两种葡萄酒相互是对方的噪声、未经剪枝的决策树恰好具备足够的容量来拟合数据，而剪枝后容量不足，导致性能下降。
+
+此外，在小数据集上，预剪枝和后剪枝的效果可能并不明显。
+
+\subsection*{Task4 请使用PyTorch 或scikit-learn 实现一个简单的多层感知机, 并通过层数、宽度或者优化轮数控制模型复杂度, 实验并比较测试集精度, 讨论并分析观察到的过拟合现象等（5 points）}
+
+我们选择了不同的层数、宽度、轮数的值，并发现在轮数、层数、宽度较大的时候，模型在不少数据集上出现了过拟合现象，全部图像见Prob2/out/task4文件夹中。我们选取一部分代表性的图像如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/bank/AccVsLayer_maxe400_layer_1031_175606.png}
+        \caption{bank dataset}
+        \label{fig:AccVsLayer_maxe400_layer_1031_175606 on bank dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/full_bank/AccVsLayer_maxe400_layer_1031_175715.png}
+        \caption{full-bank dataset}
+        \label{fig:AccVsLayer_maxe400_layer_1031_175715 on full bank dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/full_bank/AccVsLayer_maxe400_layer_1031_180102.png}
+        \caption{full-bank dataset}
+        \label{fig:AccVsLayer_maxe400_layer_1031_180102 on wine_quality dataset}
+    \end{minipage}
+
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/full_bank/AccVsLayer_maxe800_layer_1031_182425.png}
+        \caption{full-bank dataset}
+        \label{fig:AccVsLayer_maxe800_layer_1031_182425 on full-bank dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/digits/AccVsLayer_maxe300_layer_1031_175430.png}
+        \caption{digits dataset}
+        \label{fig:AccVsLayer_maxe300_layer_1031_175430 on digits dataset}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob2/out/task4/car/AccVsLayer_maxe800_layer_1031_175600.png}
+        \caption{car-evaluation dataset}
+        \label{fig:AccVsLayer_maxe800_layer_1031_175600 on car evaluation dataset}
+    \end{minipage}
+\end{figure}
+
+\subsection*{2.2 解释}
+
+图21-23可以较好地观察到了因为优化轮数过多、宽度过大、层数过多而导致得过拟合现象，以及轮数小、宽度较低、层数较少时的欠拟合现象。
+
+图24可以观察到，宽度不是越大越好，层数也不是越多越好；
+
+图25可以观察到增加轮数或宽度，可能会导致模型收敛所需的优化轮数变长；
+
+图26可以观察到因为轮数小、宽度较低、层数较少时的欠拟合现象。
+
+\subsection*{2.3 分析}
+
+\begin{itemize}
+    \item 层数（Depth）：
+    \begin{itemize}
+        \item 过多的层数可能导致模型过于复杂，容易记忆训练数据中的噪声，从而引发过拟合，导致在测试集上的性能下降。
+        \item 过少的层数可能有欠拟合的风险，但是在我们的数据集出现得不是很明显。
+    \end{itemize}
+    \item 宽度（Width）：
+        \begin{itemize}
+            \item 过宽的网络同样会增加模型的复杂度，增加过拟合的可能性，尤其是在训练数据量不足时.
+            \item 过窄的网络可能限制模型的表达能力，导致无法充分学习数据中的有用特征。
+        \end{itemize}
+    \item 优化轮数：
+    \begin{itemize}
+        \item 训练过多的轮数容易使模型过度拟合训练数据，损害在未见数据上的泛化能力。
+        \item 训练轮数过少，模型可能未能充分学习数据特征，导致欠拟合
+    \end{itemize}
+\end{itemize}
+
+\subsection*{注：数据集选择}
+
+数据集的加载见Prob2中的dataloader.py文件, 数据集本身见data文件夹。主要选择了 adult income, car evaluation, bank marking, dights,wine quality, breast cancer, moon 等数据集。
 
 \vspace{3em}
 
@@ -525,6 +700,7 @@ def over_sampling(self):
 \vspace{3em}
 
 \section*{四. (30 points) 神经网络实战}
+
 moons是一个简单的二分类数据集，请实现一个简单的全连接神经网络，并参考教材图5.8实现反向传播算法训练该网络，用于解决二分类问题。
 \begin{enumerate}
     \item 使用 NumPy 手动实现神经网络和反向传播算法。（15 points）
@@ -565,79 +741,288 @@ moons是一个简单的二分类数据集，请实现一个简单的全连接神
 
 
 \textbf{\large 解:}
-\begin{lstlisting}[breaklines=true, language=Python, caption=代码实现模板]
-"""
-注意：
-1. 这个框架提供了基本的结构，您需要完成所有标记为 'pass' 的函数。
-2. 确保正确实现前向传播、反向传播和梯度更新。
-3. 在比较不同初始化方法时，保持其他超参数不变。
-4. 记得处理数值稳定性问题，例如在计算对数时避免除以零。
-5. 尝试使用不同的学习率（例如 0.01, 0.1, 1），并比较结果。
-6. 在报告中详细讨论您的观察结果和任何有趣的发现。
-"""
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_moons
-from sklearn.model_selection import train_test_split
 
-# 生成数据集
-X, y = make_moons(n_samples=1000, noise=0.1, random_state=42)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+\subsection*{4.1 代码}
+\begin{itemize}
+    \item \textcolor{red}{代码见压缩包code中的Prob4, 详细说明见Prob4中的README文件}; 
+    \item \textcolor{red}{详细输出见Prob4中的out文件夹}。
+\end{itemize}
 
-class NeuralNetwork:
-    def __init__(self, input_size, hidden_size, output_size, init_method='random'):
-        self.input_size = input_size
-        self.hidden_size = hidden_size
-        self.output_size = output_size
-        
-        # 初始化权重和偏置
-        if init_method == 'random':
-            # 实现Random初始化
-            pass
-        elif init_method == 'xavier':
-            # 实现Xavier初始化
-            pass
-        elif init_method == 'he':
-            # 实现He初始化
-            pass
-        else:
-            raise ValueError("Unsupported initialization method")
+\subsection*{4.2 记录并绘制训练过程中的损失值和准确率，训练结束后绘制决策边界}
 
-    def relu(self, x):
-        return np.maximum(0, x)
+实验结果在Prob4/out/out.log与info.log中，绘制为表格如下：
 
-    def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
+\begin{table}[H]
+    \centering
+    \caption{不同lr,epoch,mehod 的MLP模型在测试集的ACC}
+    \begin{tabular}{cccccc}
+    \toprule
+    \diagbox{lr,epoch}{方法} & random & xavier & he \\
+    \midrule
+    0.01,500 & 0.87 & 0.87 & 1.0 \\
+    \midrule
+    0.01,200 & 0.87 & 0.87 & 0.965 \\
+    \midrule
+    0.1,100 & 0.865 & 0.865 & 1.0 \\
+    \midrule
+    0.1,40 & 0.88 &  0.88 & 0.995 \\
+    \midrule
+    1, 50 & 0.86 & 0.865 & 1.0 \\
+    \midrule
+    1, 20 & 0.875 & 0.895 & 1.0\\
+    \bottomrule
+    \end{tabular}
+\end{table}
 
-    def forward(self, X):
-        # 实现前向传播
-        pass
+所有图片见Prob4/out文件夹中，我们选取了一部分代表性的图片如下：
 
-    def backward(self, X, y, y_pred):
-        # 实现反向传播
-        pass
+\begin{figure}[H]
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_random/decision_boundary_epoch-0 before.png}
+        \caption{e500 lr0.01 rand init}
+        \label{fig:e500 lr0.01 rand init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_random/decision_boundary_test.png}
+        \caption{e500 lr0.01 rand test}
+        \label{fig:e500 lr0.01 rand test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_random/training_process.png}
+        \caption{e500 lr0.01 rand train}
+        \label{fig:e500 lr0.01 rand train}
+    \end{minipage}
+\end{figure}
 
-    def train(self, X, y, learning_rate, epochs, batch_size):
-        # 实现小批量梯度下降训练
-        pass
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_xavier/decision_boundary_epoch-0 before.png}
+        \caption{e500 lr0.01 xavier init}
+        \label{fig:e500 lr0.01 xavier init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_xavier/decision_boundary_test.png}
+        \caption{e500 lr0.01 xavier test}
+        \label{fig:e500 lr0.01 xavier test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_xavier/training_process.png}
+        \caption{e500 lr0.01 xavier train}
+        \label{fig:e500 lr0.01 xavier train}
+    \end{minipage}
+\end{figure}
 
-# 辅助函数
-def plot_decision_boundary(model, X, y):
-    # 绘制决策边界
-    pass
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_he/decision_boundary_epoch-0 before.png}
+        \caption{e500 lr0.01 he init}
+        \label{fig:e500 lr0.01 he init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_he/decision_boundary_test.png}
+        \caption{e500 lr0.01 he test}
+        \label{fig:e500 lr0.01 he test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e500_lr0.01_btz16_he/training_process.png}
+        \caption{e500 lr0.01 he train}
+        \label{fig:e500 lr0.01 he train}
+    \end{minipage}
+\end{figure}
 
-def plot_training_process(losses, accuracies):
-    # 绘制训练过程
-    pass
 
-# 主函数
-def main():
-    # 创建并训练模型
-    # 绘制结果
-    pass
 
-if __name__ == "__main__":
-    main()
-\end{lstlisting}
+\begin{figure}[H]
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_random/decision_boundary_epoch-0 before.png}
+        \caption{e100 lr0.1 rand init}
+        \label{fig:e100 lr0.1 rand init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_random/decision_boundary_test.png}
+        \caption{e100 lr0.1 rand test}
+        \label{fig:e100 lr0.1 rand test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_random/training_process.png}
+        \caption{e100 lr0.1 rand train}
+        \label{fig:e100 lr0.1 rand train}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_xavier/decision_boundary_epoch-0 before.png}
+        \caption{e100 lr0.1 xavier init}
+        \label{fig:e100 lr0.1 xavier init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_xavier/decision_boundary_test.png}
+        \caption{e100 lr0.1 xavier test}
+        \label{fig:e100 lr0.1 xavier test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_xavier/training_process.png}
+        \caption{e100 lr0.1 xavier train}
+        \label{fig:e100 lr0.1 xavier train}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_he/decision_boundary_epoch-0 before.png}
+        \caption{e100 lr0.1 he init}
+        \label{fig:e100 lr0.1 he init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_he/decision_boundary_test.png}
+        \caption{e100 lr0.1 he test}
+        \label{fig:e100 lr0.1 he test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e100_lr0.1_btz16_he/training_process.png}
+        \caption{e100 lr0.1 he train}
+        \label{fig:e100 lr0.1 he train}
+    \end{minipage}
+\end{figure}
+
+
+
+\begin{figure}[H]
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_random/decision_boundary_epoch-0 before.png}
+        \caption{e50 lr1.0 rand init}
+        \label{fig:e50 lr1.0 rand init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_random/decision_boundary_test.png}
+        \caption{e50 lr1.0 rand test}
+        \label{fig:e50 lr1.0 rand test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_random/training_process.png}
+        \caption{e50 lr1.0 rand train}
+        \label{fig:e50 lr1.0 rand train}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_xavier/decision_boundary_epoch-0 before.png}
+        \caption{e50 lr1.0 xavier init}
+        \label{fig:e50 lr1.0 xavier init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_xavier/decision_boundary_test.png}
+        \caption{e50 lr1.0 xavier test}
+        \label{fig:e50 lr1.0 xavier test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_xavier/training_process.png}
+        \caption{e50 lr1.0 xavier train}
+        \label{fig:e50 lr1.0 xavier train}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_he/decision_boundary_epoch-0 before.png}
+        \caption{e50 lr1.0 he init}
+        \label{fig:e50 lr1.0 he init}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_he/decision_boundary_test.png}
+        \caption{e50 lr1.0 he test}
+        \label{fig:e50 lr1.0 he test}
+    \end{minipage}
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../Prob4/out/1024_173617/e50_lr1_btz16_he/training_process.png}
+        \caption{e50 lr1.0 he train}
+        \label{fig:e50 lr1.0 he train}
+    \end{minipage}
+\end{figure}
+
+
+\subsection*{4.3 比较不同初始化方法对训练过程和最终性能的影响并给出合理解释}
+
+\textcolor{blue}{4.3.1 结果}
+
+在相同的学习率和训练轮数下，比较了随机初始化、Xavier 初始化和 He 初始化三种不同的权重初始化方法对神经网络模型的训练过程和最终性能的影响。通过实验结果的对比，可以得出以下结论：
+
+在实验环境下，He 初始化方法在 moons 数据集上表现最好，其次是 Xavier 初始化，随机初始化的性能最差。
+
+在学习率小于1的情况下，随机初始化和xavier初始化的收敛速度比He初始化快，但是最终在测试集的表现不如He初始化。
+
+\textcolor{blue}{4.3.2 补充资料}
+
+在查阅相关资料：
+
+\begin{itemize}
+    \item 随机初始化 是最基本的方法，适用于浅层网络或作为其他初始化方法的基准。然而，由于没有考虑激活函数和网络层数对输出方差的影响，可能导致信号在传播过程中逐层衰减或爆炸，可能会出现方差不匹配的问题；同时在深层网络中，随机初始化可能导致梯度消失或爆炸，进而影响模型的训练效果和收敛速度。
+
+    \item Xavier 初始化 通过精心设计的方差保持机制，适用于对称激活函数，如 sigmoid 和 tanh。它在深层网络中表现良好，能有效缓解梯度消失和爆炸的问题，促进稳定的训练过程和良好的最终性能。但对于ReLU等非对称激活函数，Xavier初始化没有充分考虑ReLU的特性，可能导致前向传播中部分神经元处于非激活状态，从而影响梯度的传播。
+    
+    \item He 初始化 进一步优化了 Xavier 初始化，专为 ReLU 激活函数设计。
+    \begin{itemize}
+        \item 更适合ReLU：ReLU激活函数在正区间线性增长，而在负区间为零，这种非对称性需要更高的初始化方差来保持信号的传播。He初始化通过增加方差，确保在ReLU激活后信号不至于过于衰减。
+        \item 有效保持信号传递：在深层网络中，He初始化能够更有效地保持前向传播和反向传播的信号强度，减少梯度消失的问题。
+        提升训练效率：由于更好的信号传播，He初始化通常能加快模型的收敛速度，提升最终的模型性能。
+    \end{itemize}
+    \item 
+\end{itemize}
+
+\textcolor{blue}{4.3.3 个人解释}
+
+实现的MLP中，虽然Loss层使用的是sigmoid函数，但是隐藏层使用的是ReLU函数，因此He初始化在这种情况下表现最好。而由于Xavier初始化没有考虑ReLU的特性，但是适合sigmoid对称激活函数，因此在这种情况下表现次之。随机初始化则表现最差。
+
+\subsection*{4.4 尝试不同的学习率，观察其对训练的影响并给出合理解释。}
+
+在训练神经网络模型时，学习率（Learning Rate）是一个关键的超参数，决定了优化算法在参数空间中移动的步伐大小。选择合适的学习率对于模型的收敛速度和最终性能具有重要影响。
+
+为了研究学习率对训练的影响，选择了0.01, 0.1, 1.0这几种不同的学习率值进行实验.
+
+\textcolor{blue}{4.4.1 结果}
+\begin{itemize}
+    \item \textbf{学习率较低（0.01）}：导致模型收敛速度较慢，训练效率低下，需要更多的训练轮数(这里是500轮)才能达到较好的性能。
+    \item \textbf{学习率适中（0.1）}：在保证训练稳定性的同时，加快了模型的收敛速度，提高了训练效率。
+    \item \textbf{学习率过高（1）}：在上图中，明显发现lr=1.0时，在Xavier初始化和随机初始化的条件下，引发训练过程的不稳定，损失函数和训练集上的正确率出现剧烈波动，导致模型无法收敛。
+\end{itemize}
+
+\textcolor{blue}{4.4.2 合理解释}
+
+学习率决定了每次参数更新的步长大小。当学习率过低时，优化过程需要更多的迭代次数才能接近最优解，训练效率低。而学习率过高时，优化过程可能在最优解附近来回跳跃，可能无法稳定收敛，甚至导致参数发散，影响模型性能。
 
 \end{document}
