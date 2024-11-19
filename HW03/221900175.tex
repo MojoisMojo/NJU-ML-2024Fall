@@ -3,13 +3,14 @@
 %\geometry{a4paper,scale=0.8}
 \documentclass[8pt]{article}
 \usepackage{ctex}  % 支持中文
+\usepackage{xeCJK}
+\setCJKmainfont{SIMSUN.TTC}
 \usepackage{indentfirst}  % 首行缩进
 \usepackage{longtable}  % 支持长表格
 \usepackage{multirow}  % 支持多行单元格
 \usepackage[a4paper, 
 top=1in, bottom=1in, left=0.8in, right=0.8in,
 ]{geometry}  % 设置页面尺寸和边距
-\usepackage{CJK}  % 支持中文
 \usepackage[fleqn]{amsmath}
 \usepackage{parskip}
 \usepackage{listings}
@@ -33,7 +34,9 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 
 \begin{document}
 
-\textbf{\color{blue} \Large 姓名：毛九弢 \ \ \ 学号：221900175 \ \ \ \today}
+\textbf{
+\color{blue}
+\Large 姓名：毛九弢 \ \ \ 学号：221900175 \ \ \ \today}
 
 \section*{一. (30 分) 软间隔 SVM}
 教材 6.4 节介绍了软间隔概念，用来解决线性不可分情况下的 SVM 问题，同时也可缓解 SVM 训练的过拟合问题。定义松弛变量 \( \xi = \{\xi_i\}_{i=1}^m \)，其中 \( \xi_i > 0 \) 表示样本 \( x_i \) 对应的间隔约束不满足的程度。软间隔 SVM 问题可以表示为：
@@ -70,10 +73,13 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 
 \textbf{\large 解:}
 
+
+{\color{red} 已知\(\rho = \frac{1}{\|\mathbf{w}\|_2}\) 带入可求解1，2}
+
 \begin{enumerate}
     \item \textbf{（10分）} 软间隔 SVM 通常采用相对软间隔，写出其原问题的形式（要求不包含 \( \rho \)）。
 
-\[ \min_{\mathbf{w}, b, {\xi_i}} \quad \frac{1}{2} | |\mathbf{w}| |^2 + C \sum_{i=1}^{n} \xi_i  \]
+\[ \min_{\mathbf{w}, b, {\xi_i}} \quad \frac{1}{2} \|\mathbf{w}\|^2 + C \sum_{i=1}^{m} \xi_i^{p}  \]
 \[\text{ s.t. }
     \begin{cases} 
         y_i (\mathbf{w}^\top \mathbf{x}_i + b ) \geq 1 - \xi_i, 
@@ -83,22 +89,20 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
     \end{cases} 
 \]
     \item \textbf{（10分）} 写出采用绝对软间隔的 SVM 原问题（不包含 \( \rho \)），并说明为什么一般不使用绝对软间隔来构建 SVM 问题。
-\[ \min_{\mathbf{w}, b, {\xi_i}}\quad  \min_{i\in[m]}
-\left(
-    \frac{1}{2} | |\mathbf{w}| |^2 + C  \xi_i 
-\right) 
+\[ \min_{\mathbf{w}, b, {\xi_i}}\quad  
+    \frac{1}{2} \|\mathbf{w}\|^2 + C  \sum_{i=1}^{m} \xi_i^{p} 
 \]
 \[\text{ s.t. }
     \begin{cases} 
-        y_i (\mathbf{w}^\top \mathbf{x}_i + b ) \geq 1 - \xi_i, 
+        y_i (\mathbf{w}^\top \mathbf{x}_i + b ) \geq 1 - \|\mathbf{w}\|_2 \xi_i, 
         &\\
         \xi_i \geq 0, 
         & , i = 1, 2, \dots, m
     \end{cases} 
 \]
 {\color{blue}为什么一般不使用绝对软间隔SVM：} \\
-很明显，绝对软间隔SVM的计算量远大于相对软间隔SVM。
-虽然绝对软间隔SVM在理论上可以提供稀疏解，有助于特征选择，但由于优化难度大、实现复杂、计算代价高，以及在实际应用中未表现出明显优势，因此一般不使用绝对软间隔SVM。相反，相对软间隔 SVM 具有良好的数学性质，优化问题为光滑的凸函数，易于求解，且在实践中表现出良好的泛化能力和稳定性。因此，L2 正则化的软间隔 SVM 更广泛地应用于实际问题中。
+很明显，绝对软间隔SVM的计算量大于相对软间隔SVM。
+在绝对软间隔的约束中，\(\|\mathbf{w}\|\xi_i\) 是变量的乘积，使得优化问题变为非凸优化问题；而相对软间隔的约束是线性的，是凸优化问题，更易于求解
     \item \textbf{（10分）} 写出 \( p = 1 \) 情况下软间隔 SVM 的对偶问题。
     \[
     \max_{\alpha} \quad \sum_{i=1}^{m} \alpha_i - \frac{1}{2} \sum_{i=1}^{m} \sum_{j=1}^{m} \alpha_i \alpha_j y_i y_j \mathbf{x}_i^\top \mathbf{x}_j
@@ -189,7 +193,10 @@ top=1in, bottom=1in, left=0.8in, right=0.8in,
 \end{figure}
     
     \item \textbf{通过网格搜索优化提高模型的泛化能力} 
-    我们通过网格搜索优化 SVM 的\textbf{惩罚参数} \(C\) 和\textbf{核系数} \( \gamma \) 。尝试 \( C \) 取值 \([0.1, 1, 10, 100]\) 和 \( \gamma \) 取值 \([0.1, 1, 10]\)，找出最佳参数组合\( C = 0.1 \)和 \( \gamma  = 0.1\)，输出了优化后训练准确率\(1.0000\)和支持向量索引\([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\)。
+    我们通过网格搜索优化 SVM 的\textbf{惩罚参数} \(C\) 和\textbf{核系数} \( \gamma \) 。尝试 \( C \) 取值 \([0.1, 1, 10, 100]\) 和 \( \gamma \) 取值 \([0.1, 1, 10]\)。
+    
+    找出了最佳参数组合\( C = 0.1 \)和 \( \gamma  = 0.1\)，优化后训练准确率为\(1.00\)，支持向量索引为\([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\)。
+    
     \textbf{总结如下：} \\
     惩罚参数 \(C\)
     \begin{itemize} 
