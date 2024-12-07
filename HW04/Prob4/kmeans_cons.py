@@ -35,7 +35,7 @@ class ConstrainedKMeans(KMeansPP):
         
 
     def assign_labels(self, distances):
-        """将每个样本分配到最近的聚类中心 保 证每个簇的大小约束
+        """将每个样本分配到最近的聚类中心 保证每个簇的大小约束
         @param distances: shape (n_samples, n_clusters)
         """
         pass
