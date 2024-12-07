@@ -6,7 +6,7 @@
 \usepackage{indentfirst}
 \usepackage{longtable}
 \usepackage{multirow}
-\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
 \usepackage{CJK}
 \usepackage[fleqn]{amsmath}
 \usepackage{parskip}
@@ -573,21 +573,8 @@ J = \sum_{i=1}^k \sum_{x \in C_i} \|x - \mu_i\|^2
 \section*{四. (30 points) 聚类实战}
 使用商场客户数据集(Mall Customer Dataset)完成客户分群分析。该数据集包含客户的年龄(Age)、年收入(Annual Income)和消费积分(Spending Score)等特征。你需要通过实现和优化聚类算法来完成客户画像分析。数据随作业提供。
 
-为方便起见，每小题我们提供了部分初始代码，其中包括预处理步骤和部分功能的实现。你可以自由选择使用或不使用这些代码来完成实现。
-\begin{lstlisting}[language=Python, caption=数据加载]
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
+{\color{red}代码见Prob4文件夹中，使用了作业提供的初始代码。}
 
-# 加载数据
-def load_mall_data():
-    df = pd.read_csv("Mall_Customers.csv")
-    X = df[['Age', 'Annual Income (k$)', 'Spending Score (1-100)']].values
-    # 数据标准化
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    return X_scaled, X, df
-\end{lstlisting}
 1. 在不借助外部实现的情况下，手动实现KMeans方法(4 points)，在数据集上进行聚类，可视化聚类结果(3 points)，并解决下列问题(3 points)：
 \begin{itemize}
     \item 如何使用肘部法则确定合适的k值，绘图说明
@@ -595,38 +582,128 @@ def load_mall_data():
     \item 计算和分析簇内平方和(inertia)
 \end{itemize}
 
-\begin{lstlisting}[language=Python, caption=Kmeans部分实现]
-class KMeans:
-    def __init__(self, n_clusters=3, max_iters=100):
-        self.n_clusters = n_clusters
-        self.max_iters = max_iters
-        self.centroids = None
-        self.labels = None
-        self.inertia_ = None  # 簇内平方和
-        
-    def fit(self, X):
-        """
-        实现K-means算法
-        参数:
-            X: shape (n_samples, n_features)
-        返回:
-            self
-        """
-        # TODO: 实现K-means算法
-        # 1. 随机初始化聚类中心
-        # 2. 迭代优化直到收敛
-        pass
-    
-    def predict(self, X):
-        """返回每个样本的聚类标签"""
-        pass
-        
-def plot_clusters(X, labels, centroids=None):
-    """绘制聚类结果的散点图"""
-    pass
-\end{lstlisting}
 
 \textbf{\large 解:}
+
+task1 中，我们固定了随机种子为14，以保证结果的可重复性。
+
+1.0. Kmeans算法实现见{\color{blue}Prob4/kmeans.py中}，K=5时，可视化聚类结果如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k5_0_1.png}
+        \caption{Age vs. Annual Income}
+        \label{fig: Age vs. Annual Income k5}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k5_0_2.png}
+        \caption{Age vs. Spending Score}
+        \label{fig: Age vs. Spending Score k5 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k5_1_2.png}
+        \caption{Annual Income vs. Spending Score}
+        \label{fig: Annual Income vs. Spending Score k5 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k5_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D Visualization k5 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/PCA_k5.png}
+        \caption{PCA Visualization}
+        \label{fig: PCA Visualization k5 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/log_k5.png}
+        \caption{Log}
+        \label{fig: log_k5.png rand14}
+    \end{minipage}
+\end{figure}
+
+1.1. 簇内平方和 与 K值关系如下图所示：
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./Prob4/out/task1_rand14/SEE-K.png}
+    \caption{Inertia vs. K}
+    \label{fig: Inertia vs. K rand14}
+\end{figure}
+肘部法则确定合适的k值，从图中可以看出，当K=5和7时，簇内平方和的下降速度变缓，因此选择K=5或者7。
+之后我们进行了轮廓系数的计算，K=5时，轮廓系数为0.3898，稳定性0.6299；K=7时，轮廓系数为0.4223，稳定性0.7555。一定程度上说明K=7时的聚类效果更好。
+
+
+K=5时，见图\ref{fig: Age vs. Spending Score k5 rand14}-图\ref{fig: log_k5.png rand14}，K=7时，视图如下：
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k7_0_1.png}
+        \caption{Age vs. Annual Income}
+        \label{fig: Age vs. Annual Income k7}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k7_0_2.png}
+        \caption{Age vs. Spending Score}
+        \label{fig: Age vs. Spending Score k7 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k7_1_2.png}
+        \caption{Annual Income vs. Spending Score}
+        \label{fig: Annual Income vs. Spending Score k7 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k7_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D Visualization k7 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/PCA_k7.png}
+        \caption{PCA Visualization}
+        \label{fig: PCA Visualization k7 rand14}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/log_k7.png}
+        \caption{Log}
+        \label{fig: log_k7.png rand14}
+    \end{minipage}
+\end{figure}
+
+1.2. 简单分析每个客户群的特征 我们以 K=7 为例，对每个簇的特征进行分析：
+
+\begin{itemize}
+    \item Cluster 0: 青年到中青年；年收入中等偏下；消费积分中等，有部分消费积分较低的客户。
+    \item Cluster 1: 中青年；年收入高；消费积分高；
+    \item Cluster 2: 中年；年收入中等偏上，部分收入较高；消费积分较低，大部分较低。
+    \item Cluster 3: 中青年；年收入中等，消费积分高。
+    \item Cluster 4: 青年到中青年；年收入低，消费积分较高。
+    \item Cluster 5: 几乎覆盖所有年龄段，青年较少；年收入低；消费积分较低。
+    \item Cluster 6: 中老年；年收入中等偏下；消费积分中等。
+\end{itemize}
+
+1.3. 计算和分析簇内平方和(inertia) 见图\ref{fig: Inertia vs. K rand14}，随着K值的增加，簇内平方和逐渐减小，但是减小速度逐渐变缓。
 
 \vspace{3em}
 
@@ -642,22 +719,149 @@ def plot_clusters(X, labels, centroids=None):
     \end{enumerate}
 \end{itemize}
 
-\begin{lstlisting}[language=Python, caption=Kmeans++部分实现]
-class KMeansPlusPlus(KMeans):
-    def _kmeans_plus_plus_init(self, X):
-        """实现K-means++初始化方法"""
-        pass
-
-def compute_silhouette_score(X, labels):
-    """计算轮廓系数"""
-    pass
-
-def compute_cluster_stability(X, k, n_runs=10):
-    """评估聚类结果的稳定性"""
-    pass
-\end{lstlisting}
-
 \textbf{\large 解:}
+
+2.0. 实现K-means++初始化方法，代码见{\color{blue}./Prob4/kmeans\text{\_}pp.py中}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./Prob4/out/task2_rand14/SEE-K.png}
+    \caption{K-means++ 簇内平方和 与 K值关系}
+    \label{fig: Inertia vs. K rand14 pp}
+\end{figure}
+
+根据 肘部法则，我们选取K=6，进行聚类，可视化聚类结果如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_0_1.png}
+        \caption{Age vs. Annual Income}
+        \label{fig: Age vs. Annual Income k6 pp}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_0_2.png}
+        \caption{Age vs. Spending Score}
+        \label{fig: Age vs. Spending Score k6 rand14 pp}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_1_2.png}
+        \caption{Annual Income vs. Spending Score}
+        \label{fig: Annual Income vs. Spending Score k6 rand14 pp}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D Visualization k6 rand14 pp}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/PCA_k6.png}
+        \caption{PCA Visualization}
+        \label{fig: PCA Visualization k6 rand14 pp}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/log_k6.png}
+        \caption{Log}
+        \label{fig: log_k6.png rand14 pp}
+    \end{minipage}
+\end{figure}
+
+2.1. 实现聚类评估指标，代码见 {\color{blue}Prob4/utils.py}
+
+图见下
+
+2.2. 对比分析
+
+2.2.1. 以 K = 6，randseed = 14 为例，对比结果差异，可视化图如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k6_0_1.png}
+        \caption{Kmeans: Age vs. Income}
+        \label{fig: Age vs. Annual Income k6 com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k6_0_2.png}
+        \caption{Kmeans: Age vs. Spending}
+        \label{fig: Age vs. Spending Score k6 rand14 com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task1_rand14/images/cluster_result_k6_1_2.png}
+        \caption{Kmeans: Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k6 rand14 com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_0_1.png}
+        \caption{Kmeans++: Age vs. Income}
+        \label{fig: Age vs. Annual Income k6 pp com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_0_2.png}
+        \caption{Kmeans++: Age vs. Spending}
+        \label{fig: Age vs. Spending Score k6 rand14 pp com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task2_rand14/images/cluster_result_k6_1_2.png}
+        \caption{Kmeans++: Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k6 rand14 pp com}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+从图中可以看出，
+随机初始化细分了高收入高积分人群，即图\ref{fig: Age vs. Annual Income k6 com}-图\ref{fig: Annual Income vs. Spending Score k6 rand14 com}中的Cluster1和Cluster3，
+但是对于中低收入中低积分的人群，即图\ref{fig: Age vs. Annual Income k6 com}-图\ref{fig: Annual Income vs. Spending Score k6 rand14 com}中的Cluster 0和Cluster 5的分类明显不当；
+而Kmeans++，则将中低收入中低积分的人群细分为图\ref{fig: Age vs. Annual Income k6 pp com}-图\ref{fig: Annual Income vs. Spending Score k6 rand14 pp com}中的Cluster 0, Cluster 3 和 Cluster5，
+并把一部分中等收入群体分类到中高收入人群(图\ref{fig: Age vs. Annual Income k6 pp com}-图\ref{fig: Annual Income vs. Spending Score k6 rand14 pp com}中的Cluster 1)中，分类更加合理。
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task_2_2/stabilities_k20.png}
+        \caption{Stability vs. K}
+        \label{fig: Kmeans vs. Kmeans++ Stability 50rounds}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task_2_2/iters_k20.png}
+        \caption{iters vs. K}
+        \label{fig: Kmeans vs. Kmeans++ iters 50rounds}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+2.2.2. 比较两种方法的稳定性:
+
+我们采取了50轮的随机实验(不固定随机种子)，计算了两种初始化方法的稳定性，并取平均值，见图\ref{fig: Kmeans vs. Kmeans++ Stability 50rounds}。可见，平均来看两者稳定性相差不大。
+
+2.2.3. 分析初始化对收敛速度的影响：
+
+我们采取了50轮的随机实验(不固定随机种子)，计算了两种初始化方法的迭代轮数，并取平均值，见图\ref{fig: Kmeans vs. Kmeans++ iters 50rounds}。可见，Kmeans++方法的收敛速度更快。
 
 \vspace{3em}
 
