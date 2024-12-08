@@ -16,6 +16,7 @@ class KMeans:
     def __init__(self, n_clusters=3, max_iters=200, rand=None):
         if rand is not None:
             np.random.seed(rand)
+        self.rand = rand
         self.n_clusters = n_clusters
         self.max_iters = max_iters
         self.iter_count = None
@@ -30,13 +31,13 @@ class KMeans:
 
     def get_distances(self, X, centroids):
         """计算每个样本到每个聚类中心的距离
-        @return shape (n_samples, n_clusters)
+        @return shape (n_clusters, n_samples)
         """
         return np.array([euclidean_distance(X, centroid) for centroid in centroids])
 
-    def assign_labels(self, distances):
+    def assign_labels(self, distances, past_labels) -> np.ndarray:
         """将每个样本分配到最近的聚类中心
-        @param distances: shape (n_samples, n_clusters)
+        @param distances: shape (n_clusters, n_samples)
         """
         return np.argmin(distances, axis=0)
 
@@ -50,7 +51,7 @@ class KMeans:
         """
         # TODO: 实现K-means算法
         inertias_ = np.zeros(self.n_clusters)
-        labels = np.zeros(X.shape[0])
+        labels = None
         iter_count = 0
         # 1. 随机初始化聚类中心 2种方法，随机选择和KMeans++
         centroids = self.initialize_centroids(X)
@@ -60,7 +61,7 @@ class KMeans:
             # 2.1 计算每个样本到聚类中心的距离
             distance = self.get_distances(X, centroids)
             # 2.2 将每个样本分配到最近的聚类中心
-            labels = self.assign_labels(distance)
+            labels = self.assign_labels(distance, labels)
             # 2.3 更新聚类中心
             new_centroids = np.array(
                 [
@@ -82,6 +83,7 @@ class KMeans:
         for i in range(self.n_clusters):
             inertias_[i] = ((X[labels == i] - centroids[i]) ** 2).sum()
 
+        # 4 保存结果
         self.centroids = centroids
         self.labels = labels
         self.inertia_ = inertias_.sum()

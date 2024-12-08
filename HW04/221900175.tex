@@ -935,29 +935,64 @@ K=5时，见图\ref{fig: Age vs. Spending Score k5 rand14}-图\ref{fig: log_k5.p
     \item 实现带约束的聚类算法，需要支持特征加权和簇大小约束(4 points)
     \item 在以下两个场景下重新进行实验：收入特征权重加倍,限制每个客户群至少包含20\%的客户, 绘制聚类结果(6 points)
 \end{itemize}
-\begin{lstlisting}[language=Python, caption=带约束的聚类算法部分实现]
-class ConstrainedKMeans(KMeansPlusPlus):
-    def __init__(self, n_clusters=3, max_iters=100, weights=None, size_constraints=None):
-        """
-        参数:
-            weights: 特征权重向量
-            size_constraints: 每个簇的最小和最大样本数量限制
-        """
-        super().__init__(n_clusters, max_iters)
-        self.weights = weights
-        self.size_constraints = size_constraints
-        
-    def _weighted_distance(self, X, centroids):
-        """计算加权欧氏距离"""
-        pass
-        
-    def _reassign_clusters(self, X, labels, distances):
-        """在满足大小约束的情况下重新分配样本到簇"""
-        pass
-\end{lstlisting}
-
 
 \textbf{\large 解:}
+
+3.1 实现带约束的聚类算法，代码见 {\color{blue}Prob4/kmeans\text{\_}cons.py} 和 {\color{blue}Prob4/kmeans\text{\_}mcons.py}
+
+3.2 在以下两个场景下重新进行实验，绘制聚类结果：
+
+我们固定了随机种子为14，以保证结果的可重复性。
+
+3.2.1 收入特征权重加倍
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/SEE-K.png}
+        \caption{Inertia vs. K}
+        \label{fig: Inertia vs. K k6 com}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/images/cluster_result_k6_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D k6 com con w}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/images/PCA_k6.png}
+        \caption{PCA Visualization}
+        \label{PCA k6 com con w}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/images/cluster_result_k6_0_1.png}
+        \caption{Age vs. Income}
+        \label{fig: Age vs. Annual Income k6 com con w}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/images/cluster_result_k6_0_2.png}
+        \caption{Age vs. Spending}
+        \label{fig: Age vs. Spending Score k6 com con w}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/images/cluster_result_k6_1_2.png}
+        \caption{Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k6 com con w}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+3.2.2 限制每个客户群至少包含20\%的客户
 
 \vspace{3em}
 
