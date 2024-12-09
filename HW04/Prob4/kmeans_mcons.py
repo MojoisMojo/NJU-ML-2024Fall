@@ -80,7 +80,7 @@ class MConstrainedKMeans(KMeansPP):
         min_size, max_size = self.size_constraints
         min_size = max(0, int(min_size * n_samples))
         max_size = min(n_samples, int(max_size * n_samples))
-        print(min_size, max_size)
+        print(f"min_size: {min_size}, max_size: {max_size}")
 
         # 对distance排序
         labels = np.array([-1] * n_samples)
@@ -112,16 +112,24 @@ class MConstrainedKMeans(KMeansPP):
 
         assert np.all(labels != -1), "Some samples are not assigned to any cluster"
         assert np.all(cnts <= max_size), "Some clusters are larger than max_size"
+        
+        clusters_indices = np.argsort(
+            cnts
+        )
 
-        for d, j, i in sorted_indices:
-            if cnts[j] >= min_size:
-                continue
-            past = labels[i]
-            if cnts[past] <= min_size:
-                continue
-            labels[i] = j
-            cnts[j] += 1
-            cnts[past] -= 1
+        for t in clusters_indices:
+            for d, j, i in sorted_indices:
+                if cnts[j] >= min_size:
+                    continue
+                past = labels[i]
+                if past == j:
+                    continue
+                if past < t and cnts[past] <= min_size:
+                    continue
+                labels[i] = j
+                cnts[j] += 1
+                cnts[past] -= 1
+        
 
         assert np.all(cnts >= min_size), "Some clusters are smaller than min_size"
 
