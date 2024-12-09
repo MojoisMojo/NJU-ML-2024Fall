@@ -1,0 +1,25 @@
+digraph Tree {
+node [shape=box, style="filled, rounded", color="black", fontname="helvetica"] ;
+edge [fontname="helvetica"] ;
+0 [label=<exclamation &le; 0.5<br/>gini = 0.409<br/>samples = 4137<br/>value = [2952, 1185]<br/>class = Ham>, fillcolor="#efb488"] ;
+1 [label=<meter &le; 0.5<br/>gini = 0.298<br/>samples = 3130<br/>value = [2560, 570]<br/>class = Ham>, fillcolor="#eb9d65"] ;
+0 -> 1 [labeldistance=2.5, labelangle=45, headlabel="True"] ;
+2 [label=<parenthesis &le; 0.5<br/>gini = 0.344<br/>samples = 2579<br/>value = [2009, 570]<br/>class = Ham>, fillcolor="#eca571"] ;
+1 -> 2 ;
+3 [label=<gini = 0.408<br/>samples = 1630<br/>value = [1165.0, 465.0]<br/>class = Ham>, fillcolor="#efb388"] ;
+2 -> 3 ;
+4 [label=<gini = 0.197<br/>samples = 949<br/>value = [844, 105]<br/>class = Ham>, fillcolor="#e89152"] ;
+2 -> 4 ;
+5 [label=<gini = 0.0<br/>samples = 551<br/>value = [551, 0]<br/>class = Ham>, fillcolor="#e58139"] ;
+1 -> 5 ;
+6 [label=<meter &le; 0.5<br/>gini = 0.475<br/>samples = 1007<br/>value = [392, 615]<br/>class = Spam>, fillcolor="#b7dbf6"] ;
+0 -> 6 [labeldistance=2.5, labelangle=-45, headlabel="False"] ;
+7 [label=<ampersand &le; 0.5<br/>gini = 0.45<br/>samples = 935<br/>value = [320, 615]<br/>class = Spam>, fillcolor="#a0d0f3"] ;
+6 -> 7 ;
+8 [label=<gini = 0.41<br/>samples = 836<br/>value = [241.0, 595.0]<br/>class = Spam>, fillcolor="#89c5f0"] ;
+7 -> 8 ;
+9 [label=<gini = 0.322<br/>samples = 99<br/>value = [79, 20]<br/>class = Ham>, fillcolor="#eca16b"] ;
+7 -> 9 ;
+10 [label=<gini = 0.0<br/>samples = 72<br/>value = [72, 0]<br/>class = Ham>, fillcolor="#e58139"] ;
+6 -> 10 ;
+}
