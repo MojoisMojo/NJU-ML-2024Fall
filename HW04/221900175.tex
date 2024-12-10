@@ -784,9 +784,42 @@ K=5时，见图\ref{fig: Age vs. Spending Score k5 rand14}-图\ref{fig: log_k5.p
     \end{minipage}
 \end{figure}
 
-2.1. 实现聚类评估指标，代码见 {\color{blue}Prob4/utils.py}
+2.1. 实现聚类评估指标，(轮廓系数 (Silhouette Score)、聚类稳定性评估) 
 
-图见下
+代码见 {\color{blue}Prob4/utils.py}
+
+轮廓系数的输出在log中。表如下
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        K & Silhouette Score  \\
+        \hline
+        2 & 0.3251  \\
+        3 & 0.3115  \\
+        4 & 0.3041  \\
+        5 & 0.4162  \\
+        6 & 0.4480  \\
+        7 & 0.3959  \\
+        8 & 0.3563  \\
+        9 & 0.3304  \\
+        10 & 0.3108  \\
+        11 & 0.3053  \\
+        12 & 0.2993  \\
+        13 & 0.2933  \\
+        14 & 0.3114  \\
+        15 & 0.3212  \\
+        16 & 0.3296  \\
+        17 & 0.3060  \\
+        18 & 0.2884  \\
+        19 & 0.2745  \\
+        20 & 0.2699  \\
+        \hline
+    \end{tabular}
+    \caption{Silhouette Score}
+\end{table}
+
+稳定性见下图\ref{fig: Kmeans vs. Kmeans++ Stability 50rounds}。
 
 2.2. 对比分析
 
