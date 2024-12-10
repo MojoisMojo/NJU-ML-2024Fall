@@ -1,7 +1,3 @@
-"""
-https://blog.csdn.net/Sjxjdnidjenff/article/details/143107465 独立热编码参考
-"""
-
 from collections import Counter
 
 dir = "../datasets"
@@ -14,7 +10,6 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.model_selection import cross_val_score
 import pandas as pd
-from pydot import graph_from_dot_data
 import io
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 import random
@@ -219,8 +214,7 @@ if __name__ == "__main__":
     X, y, Z, Zy, clns, fs = load_spam()
     # X, y, Z, Zy, clns, fs = load_titanic()
     print(fs)
-    print("X[0]:\n", X[0])
-    print("y[0]:\n", y[0])
-    print("Z[0]:\n", Z[0])
-    if Zy:
-        print("Zy[0]:\n", Zy[0])
+    print("y = 0, X[0]:\n", X[y==0][0])
+    print("y = 1, X[0]:\n", X[y==1][0])
+    for i,f in enumerate(fs):
+        print(f"{f} & {X[y==0][0][i]} & {X[y==1][0][i]} \\\\")

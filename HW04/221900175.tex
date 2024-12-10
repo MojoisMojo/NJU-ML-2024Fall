@@ -197,18 +197,40 @@ E\left(\sum_{i=1}^{n}I(x_i)\right)
 
 1. 参考模板实现随机森林算法。你也可以选择不参考模板，自行实现，但是不允许使用任何现成的随机森林实现。不过你可以使用库中提供的单棵决策树实现（我们在模板代码中使用了sklearn.tree .DecisionTreeClassifier）。如果使用模板代码，你主要需要实现随机森林继承的超类，即bagged trees的实现，它会基于不同的数据样本创建并训练多棵决策树。完成后，请在模板中补充上缺失的部分。（5 points）
 
+\textbf{\large 解:}
+
 {\color{blue} 代码见附件Prob2。}
 
+\vspace{3em}
+
 2.不需要长篇大论，每个问题用1-2句话回答即可：(5 points)
-\begin{itemize}
-\item 你是如何处理分类特征和缺失值的？
-\item 你实现的决策树的停止准则是什么？
-\item 你是如何实现随机森林的？
-\item 你是否采用了特殊的方法加速训练？（回答“没有”也是可以的。）
-\item 还有什么特别棒的功能你实现了吗？（回答“没有”也是可以的。）
-\end{itemize}
 
 \textbf{\large 解:}
+
+\begin{itemize}
+\item 你是如何处理分类特征和缺失值的？
+    \begin{itemize}
+        \item spam数据集：没有缺失值和分类特征。
+        \item Titanic数据集：根据模板代码，将训练集和测试集组合后，将频数大于某个阈值(选取的为10)字符串和分类特征独热编码，并将原先的分类特征删除，对于缺失值，使用众数填充。
+    \end{itemize}
+\item 你实现的决策树的停止准则是什么？
+    \begin{itemize}
+        \item 决策树的停止准则是：当树的深度达到最大深度，或者节点的样本数小于最小分裂样本数时停止分裂。
+    \end{itemize}
+\item 你是如何实现随机森林的？
+    \begin{itemize}
+        \item 采取Bagged Trees的方法，即通过有放回抽样生成多个子样本集，每个子样本集大小为$n = n\_samples$，然后基于不同的数据样本创建并训练多棵决策树，预测试时，对每棵树的预测结果进行投票。
+        \item 具体实现上，根据模板代码，选取100棵树，每棵树的最大深度为5，最小分裂样本数为2。
+    \end{itemize}
+\item 你是否采用了特殊的方法加速训练？
+    \begin{itemize}
+        \item 没有，但是sklearn.tree.DecisionTreeClassifier中实现了一些加速训练的方法。
+    \end{itemize}
+\item 还有什么特别棒的功能你实现了吗？
+    \begin{itemize}
+        \item 没有。
+    \end{itemize}
+\end{itemize}
 
 \vspace{3em}
 
@@ -217,39 +239,169 @@ E\left(\sum_{i=1}^{n}I(x_i)\right)
 
 \textbf{\large 解:}
 
+\begin{table}[H]
+    \centering
+    \caption{决策树和随机森林在两个数据集上的准确率}
+    \label{tab:accuracy}
+    \begin{tabular}{c|c|c|c|c}
+        \toprule
+        数据集 & 分类器 & 训练准确率 & 测试准确率 & 测试集五折交叉\\
+        \midrule
+        Spam & 决策树 & 79.91\% & 77.78\% & 77.97\% \\
+        Spam & 随机森林 & 82.16\% & 79.42\% & 77.00\% \\
+        Titanic & 决策树 & 82.72\% & 96.65\% & 100.0\% \\
+        Titanic & 随机森林 & 83.83\% & 93.30\% & 100.0\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
 \vspace{3em}
 
 4. 决策树和随机森林的决策分析。（5 points）
+
+\textbf{\large 解:}
+
+决策树的形状见{\color{blue} Prob2/out/task1spam/spam-basic-tree.pdf} 和 {\color{blue} Prob2/out/task1titanic/titanic-basic-tree.pdf}。
+
+按照题目的描述，我们聚焦分析Spam数据集上的决策树和随机森林的决策过程。
+
 \begin{itemize}
 \item
 对于决策树，选择来自每个类别（垃圾邮件和正常邮件）的一条数据点，列出决策树为对其分类所做的分裂（即，在哪个特征上以及该特征的哪个值上进行分裂）。
-以下是一个示例：
 
-\begin{enumerate}
-    \item (`hot") $\geq$ 2
-    \item (`thanks") $<$ 1
-    \item (`nigeria") $\geq$ 3
-    \item 因此这封邮件是垃圾邮件。
-\end{enumerate}
+选取的两个样本如下：
+\begin{table}[H]
+    \centering
+    \caption{决策树的两个样本}
+    \label{tab:决策树样本}
+    \begin{tabular}{c|c|c}
+        \toprule
+        特征 & 样本一(Ham正常邮件) & 样本二(Spam垃圾邮件) \\
+        \midrule
+        pain & 0.0 & 0.0 \\
+        private & 0.0 & 0.0 \\
+        bank & 0.0 & 0.0 \\
+        money & 0.0 & 0.0 \\
+        drug & 0.0 & 0.0 \\
+        spam & 0.0 & 0.0 \\
+        prescription & 0.0 & 0.0 \\
+        creative & 0.0 & 0.0 \\
+        height & 0.0 & 0.0 \\
+        featured & 0.0 & 0.0 \\
+        differ & 0.0 & 0.0 \\
+        width & 0.0 & 0.0 \\
+        other & 0.0 & 1.0 \\
+        energy & 0.0 & 0.0 \\
+        business & 1.0 & 1.0 \\
+        message & 0.0 & 0.0 \\
+        volumes & 0.0 & 0.0 \\
+        revision & 0.0 & 0.0 \\
+        path & 0.0 & 0.0 \\
+        meter & 0.0 & 0.0 \\
+        memo & 0.0 & 0.0 \\
+        planning & 0.0 & 0.0 \\
+        pleased & 0.0 & 0.0 \\
+        record & 0.0 & 0.0 \\
+        out & 0.0 & 0.0 \\
+        semicolon & 0.0 & 0.0 \\
+        dollar & 4.0 & 0.0 \\
+        sharp & 0.0 & 0.0 \\
+        exclamation & 0.0 & 1.0 \\
+        parenthesis & 2.0 & 0.0 \\
+        square\_bracket & 0.0 & 0.0 \\
+        ampersand & 0.0 & 0.0 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
-\begin{enumerate}
-    \item (`budget") $\geq$ 2
-    \item (`spreadsheet") $\geq$ 1
-    \item 因此这封邮件是正常邮件。
-\end{enumerate}
+决策树的图像如下：
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Prob2/out/task1spam/spam-basic-tree.pdf}
+    \caption{Spam数据集决策树}
+\end{figure}
+
+\begin{itemize}
+    \item 样本一(Ham正常邮件)：根据决策树，样本一被分类为正常邮件。
+    \begin{enumerate}
+        \item (`exclamation") $\le$ 0.5
+        \item (`meter") $\le$ 0.5
+        \item (`parenthesis") $>$ 0.5
+        \item 因此这封邮件是正常邮件。
+    \end{enumerate}
+    \item 样本二(Spam垃圾邮件)：根据决策树，样本二被分类为垃圾邮件。
+    \begin{enumerate}
+        \item (`exclamation") $>$ 0.5
+        \item (`meter") $\le$ 0.5
+        \item (`ampersand") $\le$ 0.5
+        \item 因此这封邮件是垃圾邮件。
+    \end{enumerate}
+\end{itemize}
 
 \item
-对于随机森林，找出并列出树根节点处最常见的分裂。例如：
+对于随机森林，找出并列出树根节点处最常见的分裂。
 
-\begin{enumerate}
-    \item (`viagra") $\geq$ 3 (20 trees)
-    \item (`thanks") $<$ 4 (15 trees)
-    \item (`nigeria") $\geq$ 1 (5 trees)
-\end{enumerate}
+输出文件见{\color{blue} Prob2/out/task2spam/task2\_spam.log}和{\color{blue} Prob2/out/task2titanic/task2\_titanic.log}。整理如下：
+
+\begin{itemize}
+    \item Spam:
+    \begin{enumerate}
+        \item `money` $\le$ 0.5(15 trees)
+        \item `meter` $\le$ 0.5(15 trees)
+        \item `exclamation` $\le$ 0.5(13 trees)
+        \item `pain` $\le$ 0.5(8 trees)
+        \item `volumes` $\le$ 0.5(8 trees)
+        \item `ampersand` $\le$ 0.5(6 trees)
+        \item `featured` $\le$ 0.5(6 trees)
+        \item `parenthesis` $\le$ 0.5(6 trees)
+        \item `creative` $\le$ 0.5(5 trees)
+        \item `spam` $\le$ 0.5(4 trees)
+        \item `prescription` $\le$ 0.5(4 trees)
+        \item `sharp` $\le$ 1.5(2 trees)
+        \item `dollar` $\le$ 0.5(2 trees)
+        \item `dollar` $\le$ 1.5(2 trees)
+        \item `private` $\le$ 0.5(1 trees)
+        \item `differ` $\le$ 0.5(1 trees)
+        \item `other` $\le$ 0.5(1 trees)
+        \item `business` $\le$ 2.5(1 trees)
+    \end{enumerate}
+    \item Titanic
+    \begin{enumerate}
+        \item (`male`) $\le$ 0.5 ( 24 trees)
+        \item (`Pclass`) $\le$ 2.5 ( 21 trees)
+        \item (`female`) $\le$ 0.5 ( 13 trees)
+        \item (`C`) $\le$ 0.5 ( 7 trees)
+        \item (`S`) $\le$ 0.5 ( 5 trees)
+        \item (`Fare`) $\le$ 10.481249809265137 ( 3 trees)
+        \item (`Fare`) $\le$ 10.816649913787842 ( 3 trees)
+        \item (`Age`) $\le$ 6.5 ( 2 trees)
+        \item (`Fare`) $\le$ 10.824999809265137 ( 2 trees)
+        \item (`Age`) $\le$ 5.5 ( 2 trees)
+        \item (`Fare`) $\le$ 16.40000057220459 ( 1 trees)
+        \item (`Fare`) $\le$ 21.716650009155273 ( 1 trees)
+        \item (`Age`) $\le$ 18.5 ( 1 trees)
+        \item (`Fare`) $\le$ 74.375 ( 1 trees)
+        \item (`Fare`) $\le$ 18.375 ( 1 trees)
+        \item (`SibSp`) $\le$ 2.5 ( 1 trees)
+        \item (`SibSp`) $\le$ 0.5 ( 1 trees)
+        \item (`Fare`) $\le$ 15.172900199890137 ( 1 trees)
+        \item (`PassengerId`) $\le$ 255.5 ( 1 trees)
+        \item (`Age`) $\le$ 17.5 ( 1 trees)
+        \item (`Parch`) $\le$ 0.5 ( 1 trees)
+        \item (`Age`) $\le$ 15.5 ( 1 trees)
+        \item (`PassengerId`) $\le$ 26.5 ( 1 trees)
+        \item (`Fare`) $\le$ 15.64585018157959 ( 1 trees)
+        \item (`Pclass`) $\le$ 1.5 ( 1 trees)
+        \item (`Age`) $\le$ 8.5 ( 1 trees)
+        \item (`Fare`) $\le$ 52.277099609375 ( 1 trees)
+        \item (`Fare`) $\le$ 54.04999923706055 ( 1 trees)
+    \end{enumerate}
+\end{itemize}
 
 \end{itemize}
 
-\textbf{\large 解:}
+
+
 
 \vspace{3em}
 
@@ -742,7 +894,7 @@ K=5时，见图\ref{fig: Age vs. Spending Score k5 rand14}-图\ref{fig: log_k5.p
         \centering
         \includegraphics[width=\textwidth]{./Prob4/out/task3_1_com/SEE-K.png}
         \caption{Inertia vs. K}
-        \label{fig: Inertia vs. K k6 com}
+        \label{fig: Inertia vs. K com}
     \end{minipage}
     \hfill
     \begin{minipage}{0.32\textwidth}
@@ -784,7 +936,148 @@ K=5时，见图\ref{fig: Age vs. Spending Score k5 rand14}-图\ref{fig: log_k5.p
 
 3.2.2 限制每个客户群至少包含20\%的客户
 
-\vspace{3em}
+查阅资料，限制最小簇的实现可以使用最小成本流算法，代码见 {\color{blue}Prob4/kmeans\text{\_}cons.py}。K=4和5的图片如下：
 
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/SEE-K.png}
+        \caption{Inertia vs. K}
+        \label{fig: Inertia vs. K com min20 2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k4_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D k4 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/PCA_k4.png}
+        \caption{PCA Visualization}
+        \label{PCA k4 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k4_0_1.png}
+        \caption{Age vs. Income}
+        \label{fig: Age vs. Annual Income k4 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k4_0_2.png}
+        \caption{Age vs. Spending}
+        \label{fig: Age vs. Spending Score k4 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k4_1_2.png}
+        \caption{Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k4 com con min20}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/SEE-K.png}
+        \caption{Inertia vs. K}
+        \label{fig: Inertia vs. K com min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k5_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D k5 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/PCA_k5.png}
+        \caption{PCA Visualization}
+        \label{PCA k5 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k5_0_1.png}
+        \caption{Age vs. Income}
+        \label{fig: Age vs. Annual Income k5 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k5_0_2.png}
+        \caption{Age vs. Spending}
+        \label{fig: Age vs. Spending Score k5 com con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_com/images/cluster_result_k5_1_2.png}
+        \caption{Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k5 com con min20}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+此外，在摸索过程中，我实现了一个不如最小成本流的贪心近似算法，代码见 {\color{blue}Prob4/kmeans\text{\_}mcons.py}。图片如下：
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/SEE-K.png}
+        \caption{Inertia vs. K}
+        \label{fig: Inertia vs. K mcom min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/images/cluster_result_k5_3d.png}
+        \caption{3D Visualization}
+        \label{fig: 3D k5 mcom2 con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/images/PCA_k5.png}
+        \caption{PCA Visualization}
+        \label{PCA k5 mcom2 con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/images/cluster_result_k5_0_1.png}
+        \caption{Age vs. Income}
+        \label{fig: Age vs. Annual Income k5 mcom2 con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/images/cluster_result_k5_0_2.png}
+        \caption{Age vs. Spending}
+        \label{fig: Age vs. Spending Score k5 mcom2 con min20}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{./Prob4/out/task3_2_mcom2/images/cluster_result_k5_1_2.png}
+        \caption{Income vs. Spending}
+        \label{fig: Annual Income vs. Spending Score k5 mcom2 con min20}
+    \end{minipage}
+    \hfill
+\end{figure}
+
+\vspace{3em}
 
 \end{document}
