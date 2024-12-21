@@ -5,6 +5,8 @@ from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import KBinsDiscretizer, StandardScaler
 from scipy.stats import entropy
 from itertools import combinations
+from utils import plot_feature_number_vs_accuracy, analyse_and_compare
+import os
 
 """
 Classes 3
@@ -89,36 +91,70 @@ def RFE(X, y, k, model, evaluate_method):
 def wrapper_selected(
     X, y, k, model=MODEL, evaluate_method=evaluate_model, method="RFE"
 ):
-    return RFE(X,y,k,model,evaluate_method)
+    return RFE(X, y, k, model, evaluate_method)
 
 
 def singletask(n_selected):
     assert n_selected > 0 and n_selected <= X.shape[1]
+    print(f"With {n_selected} features:")
     X_filter_indices = filter_selected(X, y, n_selected)
     X_filter_selected = X[:, X_filter_indices]
+    print(f"X_filter_indices:{sorted(X_filter_indices)}")
     X_wrapper_indices = wrapper_selected(X, y, n_selected, MODEL)
     X_wrapper_selected = X[:, X_wrapper_indices]
+    print(f"X_wrapper_indices:{sorted(X_wrapper_indices)}")
     assert (
         X_filter_selected.shape[1] == n_selected
         and X_wrapper_selected.shape[1] == n_selected
     )
-    return evaluate_model(X_filter_selected, y), evaluate_model(X_wrapper_selected, y)
+    fs, ws = evaluate_model(X_filter_selected, y), evaluate_model(X_wrapper_selected, y)
+    print(f"filter's Accuracy: {fs}\nwrapper's Accuracy: {ws}")
+    return fs, ws, X_filter_indices, X_wrapper_indices
 
 
-def task():
+def task(again=False):
+    if again == False and os.path.exists("task1.npz"):
+        loaded = np.load("task1.npz", allow_pickle=True)
+        return (
+            loaded["filter_scores"],
+            loaded["wrapper_scores"],
+            loaded["filter_indices"],
+            loaded["wrapper_indices"],
+        )
     n_f = X.shape[1]
     filter_scores = []
     wrapper_scores = []
+    filter_indices = []
+    wrapper_indices = []
     for n_selected in range(1, n_f):
-        fs, ws = singletask(n_selected)
+        fs, ws, fidx, widx = singletask(n_selected)
         filter_scores.append(fs)
         wrapper_scores.append(ws)
+        filter_indices.append(fidx)
+        wrapper_indices.append(widx)
     all_f_score = evaluate_model(X, y)
     filter_scores.append(all_f_score)
     wrapper_scores.append(all_f_score)
-    return filter_scores, wrapper_scores
+    filter_indices.append(list(range(n_f)))
+    wrapper_indices.append(list(range(n_f)))
+    print(f"all features:\nAccuracy: {all_f_score}")
+    filter_scores, wrapper_scores, filter_indices, wrapper_indices = (
+        np.array(filter_scores),
+        np.array(wrapper_scores),
+        np.array(filter_indices, dtype=object),
+        np.array(wrapper_indices, dtype=object),
+    )
+    np.savez(
+        "task1.npz",
+        filter_scores=filter_scores,
+        wrapper_scores=wrapper_scores,
+        filter_indices=filter_indices,
+        wrapper_indices=wrapper_indices,
+    )
+    return filter_scores, wrapper_scores, filter_indices, wrapper_indices
 
 
 if __name__ == "__main__":
-    fs,ws = singletask(5)
-    print(f"fs:{fs},ws:{ws}")
+    fss, wss, fis, wis = task()
+    plot_feature_number_vs_accuracy(range(1, 14), fss, wss)
+    analyse_and_compare(fss, wss, fis, wis)

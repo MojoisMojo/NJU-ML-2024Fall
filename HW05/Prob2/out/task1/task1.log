@@ -1,0 +1,62 @@
+With 1 features:
+X_filter_indices:[6]
+X_wrapper_indices:[6]
+filter's Accuracy: 0.7984126984126985
+wrapper's Accuracy: 0.7984126984126985
+With 2 features:
+X_filter_indices:[6, 12]
+X_wrapper_indices:[6, 12]
+filter's Accuracy: 0.893968253968254
+wrapper's Accuracy: 0.893968253968254
+With 3 features:
+X_filter_indices:[6, 11, 12]
+X_wrapper_indices:[6, 9, 12]
+filter's Accuracy: 0.9330158730158731
+wrapper's Accuracy: 0.9496825396825397
+With 4 features:
+X_filter_indices:[6, 9, 11, 12]
+X_wrapper_indices:[2, 6, 9, 12]
+filter's Accuracy: 0.9496825396825397
+wrapper's Accuracy: 0.9607936507936508
+With 5 features:
+X_filter_indices:[0, 6, 9, 11, 12]
+X_wrapper_indices:[0, 2, 6, 9, 12]
+filter's Accuracy: 0.9609523809523811
+wrapper's Accuracy: 0.9661904761904762
+With 6 features:
+X_filter_indices:[0, 6, 9, 10, 11, 12]
+X_wrapper_indices:[0, 2, 3, 6, 9, 12]
+filter's Accuracy: 0.9888888888888889
+wrapper's Accuracy: 0.9774603174603176
+With 7 features:
+X_filter_indices:[0, 5, 6, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 6, 9, 12]
+filter's Accuracy: 0.9888888888888889
+wrapper's Accuracy: 0.9833333333333332
+With 8 features:
+X_filter_indices:[0, 1, 5, 6, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 6, 9, 11, 12]
+filter's Accuracy: 0.9719047619047618
+wrapper's Accuracy: 0.9944444444444445
+With 9 features:
+X_filter_indices:[0, 1, 4, 5, 6, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 5, 6, 9, 11, 12]
+filter's Accuracy: 0.9776190476190475
+wrapper's Accuracy: 0.9888888888888889
+With 10 features:
+X_filter_indices:[0, 1, 4, 5, 6, 8, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 5, 6, 7, 9, 11, 12]
+filter's Accuracy: 0.9607936507936508
+wrapper's Accuracy: 0.9944444444444445
+With 11 features:
+X_filter_indices:[0, 1, 3, 4, 5, 6, 8, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 12]
+filter's Accuracy: 0.9552380952380952
+wrapper's Accuracy: 0.9944444444444445
+With 12 features:
+X_filter_indices:[0, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+X_wrapper_indices:[0, 1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12]
+filter's Accuracy: 0.9552380952380952
+wrapper's Accuracy: 0.9888888888888889
+all features:
+Accuracy: 0.9888888888888889
