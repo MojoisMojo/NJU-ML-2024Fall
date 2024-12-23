@@ -495,13 +495,24 @@ P(a \mid b, d) = P(a \mid d)
         在给定的图中，如何将联合分布 $p(a, b, c, d)$ 表示为边际分布和条件分布的组合？
         
         \textbf{\large 解:}
+
+        已知：$a \perp\!\!\!\perp d \mid c, b \perp\!\!\!\perp d \mid c, a \perp\!\!\!\perp b$, 故而：
+        \begin{align*}
+            p(a,b,c,d) 
+            &=p(c,d|a,b)p(a,b) \\
+            &= p(c,d|a,b)p(a)p(b)\\
+            &= p(d|a,b,c)p(a)p(b)p(c) \\
+            &= p(d|c)p(a)p(b)p(c)
+        \end{align*}
         \vspace{1em}
 
         \item 
 
         假设 $a, b, c, d$ 是二元随机变量，求建模该联合分布所需的最小参数个数。
         
-        \textbf{\large 解:}
+        \textbf{\large 解:} 5个参数
+        
+        $p(c)$需要一个，$p(b)$需要一个，$p(a)$需要一个，$p(d|c)$需要两个($c$有两个值)，所以最少要5个。
         \vspace{1em}
 
         \item 
@@ -509,14 +520,115 @@ P(a \mid b, d) = P(a \mid d)
         证明 $a$ 和 $b$ 是相互独立的，即 \(a \perp\!\!\!\perp b\)。
         
         \textbf{\large 解:}
-        \vspace{1em}
 
+        在贝叶斯网络中，两个节点之间的独立性可以通过图的结构来判断。具体来说，如果两个节点之间没有直接的路径，并且它们之间的所有路径都被阻断（即满足d-分离条件），那么这两个节点是相互独立的。
+
+        在给定的图中，$a$ 和 $b$ 之间没有直接的路径。
+        
+        根据d-分离的定义，如果路径上的中间节点是“v-结构”（即箭头指向中间节点），并且中间节点及其所有子节点未被观测到，那么这条路径被阻断。在我们的图中，路径 $a \rightarrow c \leftarrow b, c \cdots \rightarrow d$ 是一个典型的v-结构，节点 $c$及其所有子节点({$d$}) 都是未观测节点。因此，路径 $a \rightarrow c \leftarrow b$ 被阻断。
+        
+        由于 $a$ 和 $b$ 之间的唯一路径被阻断，根据d-分离的定义，$a$ 和 $b$ 是相互独立的。
 
         \item 
         假设对于图中任意节点 $x$ , 都有 $p(x \mid \text{pa}(x)) \neq p(x)$, 其中 $\text{pa}(\cdot)$ 表示节点 $x$ 的父节点集合。
         证明当观测到 $d$ 时, $a$ 和 $b$ 不再相互独立, 即 \(a \not\perp\!\!\!\perp b \mid d\). 
         
         \textbf{\large 解:}
+        
+        根据d-分离的定义，如果路径上的中间节点是“v-结构”（即箭头指向中间节点），并且中间节点未被观测到，那么这条路径被阻断。在我们的图中，路径 $a \rightarrow c \leftarrow b$ 是一个典型的v-结构，节点 $c$ 是未观测节点。
+
+        但，由于节点 $d$ 是节点 $c$ 的子节点，观测到 $d$时，由于$p(c|d)\not= p(c)$，节点 $c$ 的概率分布和未观测时的概率分布不同，从而影响节点 $a$ 和 $b$ 之间的独立性。
+        
+        具体来说，观测到 $d$ 会使得节点 $c$ 的状态变得相关，因为 $d$ 是 $c$ 的子节点。由于 $c$ 是 $a$ 和 $b$ 的共同子节点，观测到 $d$ 会使得 $a$ 和 $b$ 之间变得相关。因此，$a$ 和 $b$ 不再相互独立。
+        
+        具体反例如下：
+        假设$a,b,c,d$为二元随机变量，极端地假设条件概率如下：
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|}
+                \hline
+                $p(a|c)$ & $a=1$ & $a=0$ \\
+                \hline
+                $c=1$ & $0.5$ & $0.5$ \\
+                \hline
+                $c=0$ & $0.5$ & $0.5$ \\
+                \hline
+            \end{tabular}
+            \caption{Conditional probabilities of $a$ given $c$}
+        \end{table}
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|}
+                \hline
+                $p(b|c)$ & $b=1$ & $b=0$ \\
+                \hline
+                $c=1$ & $0.5$ & $0.5$ \\
+                \hline
+                $c=0$ & $0.5$ & $0.5$ \\
+                \hline
+            \end{tabular}
+            \caption{Conditional probabilities of $b$ given $c$}
+        \end{table}
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|}
+                \hline
+                $p(c|d)$ & $c=1$ & $c=0$ \\
+                \hline
+                $d=1$ & $0.5$ & $0.5$ \\
+                \hline
+                $d=0$ & $0.5$ & $0.5$ \\
+                \hline
+            \end{tabular}
+            \caption{Conditional probabilities of $c$ given $d$}
+        \end{table}
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                $p(a,b|c)$ & $a=1, b=1$ & $a=1, b=0$ & $a=0, b=1$ & $a=0, b=0$ \\
+                \hline
+                $c=1$ & 0.6 & 0.2 & 0.2 & 0 \\
+                \hline
+                $c=0$ & 0 & 0.2 & 0.2 & 0.6 \\
+                \hline
+            \end{tabular}
+            \caption{Joint probabilities of $a$ and $b$ given $c$}
+        \end{table}
+        
+        \begin{table}[H]
+            \centering
+            \begin{tabular}{|c|c|}
+                \hline
+                $p(c)$ & Probability \\
+                \hline
+                $c=0$ & $0.3$ \\
+                \hline
+                $c=1$ & $0.7$ \\
+                \hline
+            \end{tabular}
+            \caption{Marginal probabilities of $c$}
+        \end{table}
+       以$p(a=1,b=1|d=1)$为例：
+        \begin{align*}
+        p(a|d) \cdot p(b|d) 
+        &= 
+        \sum_{c}p(a,c|d) \cdot \sum_{c}p(b,c|d) \\
+        &=\sum_{c}p(a|c,d)p(c|d) \cdot \sum_{c}p(b|c,d)p(c|d) \\
+        &=\sum_{c}p(a|c)p(c|d) \cdot \sum_{c}p(b|c)p(c|d) \\
+        &=0.25
+        \end{align*}
+        \begin{align*}
+        p(a,b|d) 
+        &= \sum_{c}p(a,b,c|d) \\
+        &= \sum_{c}p(a,b|c,d)p(c|d) \\
+        &= \sum_{c}p(a,b|c)p(c|d) \\
+        &= 0.3\\
+        \end{align*}
+        所以$p(a,b|d)\not=p(a|d) \cdot p(b|d)$，即\(a \not\perp\!\!\!\perp b \mid d\)
         \vspace{1em}
 
     \end{enumerate}
@@ -538,11 +650,46 @@ V^{*}(s) = R(s) + \gamma \max_{a \in A} \sum_{s' \in S} P(s' | s, a) V^{*}(s')
 \item 
 考虑一个智能体从单元格 (1, 1) 开始，在第 1 步和第 2 步分别采取向上和向上的动作。计算在每个时间步内，根据这一动作序列，智能体可以到达哪些单元格，以及到达这些单元格的概率。（6 points）
 
-        
-\textbf{\large 解:}
-\vspace{3em}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|}
+    \hline
+       单元格 &  概率\\
+    \hline
+       (1,2) & 0.8 \\
+    \hline
+        (1,1) & 0.1 \\
+    \hline
+        (2,1) & 0.1 \\
+    \hline
+    \end{tabular}
+    \caption{第一步到达单元格的概率}
+    \label{tab:first step Prob}
+\end{table}
 
+由于(2,2)有墙壁，故而Step 2：
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|l|c|}
+    \hline
+       单元格 &  概率\\
+    \hline
+       (1,3) & 0.64 \\
+    \hline
+        (1,2) & 0.24 \\
+    \hline
+        (2,1) & 0.10 \\
+    \hline
+        (3,1) & 0.01 \\
+    \hline
+        (1,1) & 0.01 \\
+    \hline
+    \end{tabular}
+    \caption{第二步到达单元格的概率}
+    \label{tab:second step Prob}
+\end{table}
 
+\vspace{1em}
 
 \item
 考虑当前没有奖励值的所有状态的奖励函数 $R(s)$（即除了 (4, 2) 和 (4, 3) 以外的每个单元格）。 定义在以下奖励值下，智能体的最优策略： (i.) $R(s) = 0$, (ii.) $R(s) = -2.0$, and (iii.) $R(s) = 1.0$. 你可以假设折扣因子接近 1，例如 0.9999。画出网格世界并标出在每个状态下应采取的动作可能会对你有所帮助（记住，策略是在 MDP 中对所有状态进行定义的！）（7 points）
@@ -550,7 +697,18 @@ V^{*}(s) = R(s) + \gamma \max_{a \in A} \sum_{s' \in S} P(s' | s, a) V^{*}(s')
 \emph{注意}: 你不需要算法上计算最优策略。你必须列出每种情况的完整策略，但只需要提供直观的理由。
         
 \textbf{\large 解:}
-\vspace{3em}
+
+\begin{enumerate}[label=(\roman*)]
+    \item $R(s) = 0$
+    \item $R(s) = -2.0$
+    \item $R(s) = 1.0$
+    \begin{enumerate}
+        \item $R(奖励状态的奖励) > 1.0$
+        \item $R(奖励状态的奖励) <= 1.0$
+    \end{enumerate}
+\end{enumerate}
+
+\vspace{1em}
 
 
 
