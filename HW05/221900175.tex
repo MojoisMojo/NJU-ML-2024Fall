@@ -12,7 +12,7 @@
 \usepackage{parskip}
 \usepackage{listings}
 \usepackage{fancyhdr}
-
+\setCJKmainfont{SIMSUN.TTC}
 \pagestyle{fancy}
 
 % 设置页眉
@@ -28,6 +28,7 @@
 \usepackage{hyperref}
 \usepackage{physics}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
 \usepackage{float}
 \usepackage{multicol}
 \usepackage{amssymb}
@@ -698,24 +699,230 @@ V^{*}(s) = R(s) + \gamma \max_{a \in A} \sum_{s' \in S} P(s' | s, a) V^{*}(s')
         
 \textbf{\large 解:}
 
+{\color{red}代码见Prob5/task.py 结果见Prob5/out}
+
+假设我们初始化时，每个格子的价值为0，初始策略向上。
+
+前提假设：$R(\text{奖励状态的奖励}) > 0$，折扣系数为0.9.
+
 \begin{enumerate}[label=(\roman*)]
-    \item $R(s) = 0$
-    \item $R(s) = -2.0$
-    \item $R(s) = 1.0$
+    \item $R(s) = 0$，理论上智能体最终会走出去，下图假设 $R(\text{奖励状态的奖励}) = 1.5$
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            % 画网格，每个格子大小为2cm
+            \draw[step=2cm, gray, very thin] (0, 0) grid (8, 8);
+    
+            % 特殊状态 (4, 2) 和 (4, 3)
+            \node[fill=yellow, minimum size=1.8cm] at (7, 3) {};
+            \node[fill=yellow, minimum size=1.8cm] at (7, 5) {};
+            \node[fill=gray, minimum
+            size=1.8cm] at (3, 3) {};
+    
+            % 标注动作
+            \node[anchor=south] at (1,1) {0.8893};
+            \node at (1,1) {$\rightarrow$};
+            \node[anchor=south] at (3,1) {1.0171};
+            \node at (3,1) {$\rightarrow$};
+            \node[anchor=south] at (5,1) {1.1584};
+            \node at (5,1) {$\rightarrow$};
+            \node[anchor=south] at (7,1) {1.3014};
+            \node at (7,1) {$\uparrow$};
+            \node[anchor=south] at (1,3) {0.8547};
+            \node at (1,3) {$\uparrow$};
+            % \node[anchor=south] at (3,3) {0.0};
+            % \node at (3,3) {$\rightarrow$};
+            \node[anchor=south] at (5,3) {1.3014};
+            \node at (5,3) {$\rightarrow$};
+            \node[anchor=south] at (7,3) {1.50};
+            % \node at (7,3) {$\rightarrow$};
+            \node[anchor=south] at (1,5) {0.9734};
+            \node at (1,5) {$\rightarrow$};
+            \node[anchor=south] at (3,5) {1.1314};
+            \node at (3,5) {$\rightarrow$};
+            \node[anchor=south] at (5,5) {1.3014};
+            \node at (5,5) {$\rightarrow$};
+            \node[anchor=south] at (7,5) {1.50};
+            % \node at (7,5) {$\rightarrow$};
+            \node[anchor=south] at (1,7) {0.9100};
+            \node at (1,7) {$\rightarrow$};
+            \node[anchor=south] at (3,7) {1.0284};
+            \node at (3,7) {$\rightarrow$};
+            \node[anchor=south] at (5,7) {1.1584};
+            \node at (5,7) {$\rightarrow$};
+            \node[anchor=south] at (7,7) {1.3014};
+            \node at (7,7) {$\downarrow$};
+        \end{tikzpicture}
+        \caption{R(s) = 0 最大迭代数20 (19轮结束)}
+    \end{figure}
+    \item $R(s) = -2.0$，理论上智能体会拼命地尽快地走出去，下图假设 $R(\text{奖励状态的奖励}) = 1.5$
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            % 画网格，每个格子大小为2cm
+            \draw[step=2cm, gray, very thin] (0, 0) grid (8, 8);
+    
+            % 特殊状态 (4, 2) 和 (4, 3)
+            \node[fill=yellow, minimum size=1.8cm] at (7, 3) {};
+            \node[fill=yellow, minimum size=1.8cm] at (7, 5) {};
+            \node[fill=gray, minimum
+            size=1.8cm] at (3, 3) {};
+    
+            % 标注动作
+            \node[anchor=south] at (1,1) {-7.2537};
+            \node at (1,1) {$\rightarrow$};
+            \node[anchor=south] at (3,1) {-5.4215};
+            \node at (3,1) {$\rightarrow$};
+            \node[anchor=south] at (5,1) {-3.3967};
+            \node at (5,1) {$\rightarrow$};
+            \node[anchor=south] at (7,1) {-1.3469};
+            \node at (7,1) {$\uparrow$};
+            \node[anchor=south] at (1,3) {-7.7492};
+            \node at (1,3) {$\uparrow$};
+            % \node[anchor=south] at (3,3) {0.0};
+            % \node at (3,3) {$\rightarrow$};
+            \node[anchor=south] at (5,3) {-1.3469};
+            \node at (5,3) {$\rightarrow$};
+            \node[anchor=south] at (7,3) {1.50};
+            % \node at (7,3) {$\rightarrow$};
+            \node[anchor=south] at (1,5) {-6.0478};
+            \node at (1,5) {$\rightarrow$};
+            \node[anchor=south] at (3,5) {-3.7837};
+            \node at (3,5) {$\rightarrow$};
+            \node[anchor=south] at (5,5) {-1.3469};
+            \node at (5,5) {$\rightarrow$};
+            \node[anchor=south] at (7,5) {1.50};
+            % \node at (7,5) {$\rightarrow$};
+            \node[anchor=south] at (1,7) {-6.9573};
+            \node at (1,7) {$\rightarrow$};
+            \node[anchor=south] at (3,7) {-5.2595};
+            \node at (3,7) {$\rightarrow$};
+            \node[anchor=south] at (5,7) {-3.3967};
+            \node at (5,7) {$\rightarrow$};
+            \node[anchor=south] at (7,7) {-1.3469};
+            \node at (7,7) {$\downarrow$};
+        \end{tikzpicture}
+        \caption{R(s) = -2.0 最大迭代数20 (14轮结束)}
+    \end{figure}
+    \item $R(s) = 1.0$ 理论上智能体倾向于不停地走，不到出口，但是当出口奖励极其大时，智能体可能会贪心地走出去。
     \begin{enumerate}
-        \item $R(奖励状态的奖励) > 1.0$
-        \item $R(奖励状态的奖励) <= 1.0$
+        \item $R(\text{奖励状态的奖励})$很大，足够使其贪心地走出(这里我们取了15)：
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                % 画网格，每个格子大小为2cm
+                \draw[step=2cm, gray, very thin] (0, 0) grid (8, 8);
+        
+                % 特殊状态 (4, 2) 和 (4, 3)
+                \node[fill=yellow, minimum size=1.8cm] at (7, 3) {};
+                \node[fill=yellow, minimum size=1.8cm] at (7, 5) {};
+                \node[fill=gray, minimum
+                size=1.8cm] at (3, 3) {};
+        
+                % 标注动作
+                \node[anchor=south] at (1,1) {12.9642};
+                \node at (1,1) {$\rightarrow$};
+                \node[anchor=south] at (3,1) {13.3903};
+                \node at (3,1) {$\rightarrow$};
+                \node[anchor=south] at (5,1) {13.8612};
+                \node at (5,1) {$\rightarrow$};
+                \node[anchor=south] at (7,1) {14.3379};
+                \node at (7,1) {$\uparrow$};
+                \node[anchor=south] at (1,3) {12.8489};
+                \node at (1,3) {$\uparrow$};
+                % \node[anchor=south] at (3,3) {0.0};
+                % \node at (3,3) {$\rightarrow$};
+                \node[anchor=south] at (5,3) {14.3379};
+                \node at (5,3) {$\rightarrow$};
+                \node[anchor=south] at (7,3) {15.00};
+                % \node at (7,3) {$\rightarrow$};
+                \node[anchor=south] at (1,5) {13.2447};
+                \node at (1,5) {$\rightarrow$};
+                \node[anchor=south] at (3,5) {13.7712};
+                \node at (3,5) {$\rightarrow$};
+                \node[anchor=south] at (5,5) {14.3379};
+                \node at (5,5) {$\rightarrow$};
+                \node[anchor=south] at (7,5) {15.00};
+                % \node at (7,5) {$\rightarrow$};
+                \node[anchor=south] at (1,7) {13.0332};
+                \node at (1,7) {$\rightarrow$};
+                \node[anchor=south] at (3,7) {13.4280};
+                \node at (3,7) {$\rightarrow$};
+                \node[anchor=south] at (5,7) {13.8612};
+                \node at (5,7) {$\rightarrow$};
+                \node[anchor=south] at (7,7) {14.3379};
+                \node at (7,7) {$\downarrow$};
+            \end{tikzpicture}
+            \caption{R(s) = 1.0 最大迭代数20 (19轮结束)}
+        \end{figure}
+        \item $R(\text{奖励状态的奖励})$ 没有很大甚至小于1，取了0.8和1.5，（下图以1.5为例）：        
+        \begin{figure}[H]
+            \centering
+            \begin{tikzpicture}
+                % 画网格，每个格子大小为2cm
+                \draw[step=2cm, gray, very thin] (0, 0) grid (8, 8);
+        
+                % 特殊状态 (4, 2) 和 (4, 3)
+                \node[fill=yellow, minimum size=1.8cm] at (7, 3) {};
+                \node[fill=yellow, minimum size=1.8cm] at (7, 5) {};
+                \node[fill=gray, minimum
+                size=1.8cm] at (3, 3) {};
+        
+                % 标注动作
+                \node[anchor=south] at (1,1) {8.8328};
+                \node at (1,1) {$\rightarrow$};
+                \node[anchor=south] at (3,1) {8.8328};
+                \node at (3,1) {$\rightarrow$};
+                \node[anchor=south] at (5,1) {8.8328};
+                \node at (5,1) {$\downarrow$};
+                \node[anchor=south] at (7,1) {8.8328};
+                \node at (7,1) {$\downarrow$};
+                \node[anchor=south] at (1,3) {8.8328};
+                \node at (1,3) {$\downarrow$};
+                % \node[anchor=south] at (3,3) {0.0};
+                % \node at (3,3) {$\rightarrow$};
+                \node[anchor=south] at (5,3) {8.8325};
+                \node at (5,3) {$\leftarrow$};
+                \node[anchor=south] at (7,3) {1.50};
+                % \node at (7,3) {$\rightarrow$};
+                \node[anchor=south] at (1,5) {8.8327};
+                \node at (1,5) {$\downarrow$};
+                \node[anchor=south] at (3,5) {8.8327};
+                \node at (3,5) {$\leftarrow$};
+                \node[anchor=south] at (5,5) {8.8327};
+                \node at (5,5) {$\leftarrow$};
+                \node[anchor=south] at (7,5) {1.50};
+                % \node at (7,5) {$\rightarrow$};
+                \node[anchor=south] at (1,7) {8.8327};
+                \node at (1,7) {$\downarrow$};
+                \node[anchor=south] at (3,7) {8.8327};
+                \node at (3,7) {$\leftarrow$};
+                \node[anchor=south] at (5,7) {8.8327};
+                \node at (5,7) {$\leftarrow$};
+                \node[anchor=south] at (7,7) {8.8325};
+                \node at (7,7) {$\uparrow$};
+            \end{tikzpicture}
+            \caption{R(s) = 1.0 最大迭代数20 (未结束)}
+        \end{figure}
+        
     \end{enumerate}
 \end{enumerate}
 
 \vspace{1em}
 
-
-
 \item
 有时，MDP 的奖励函数形式为 $R(s, a)$ 它依赖于所采取的动作，或者奖励函数形式为 $R(s, a, s')$ ，它还依赖于结果状态。写出这两种形式的最优价值函数的贝尔曼方程。（7 points）
         
 \textbf{\large 解:}
+
+依赖动作
+\[
+V(s) = \max_{a \in A} \left[ R(s, a) + \gamma \sum_{s' \in S} P(s' | s, a) V(s') \right]
+\]
+
+还依赖结果
+\[ V(s) = \max_{a \in A} \left[ \sum_{s' \in S} P(s' | s, a) \left( R(s, a, s') + \gamma V(s') \right) \right] \]
+
 \vspace{3em}
 
 
